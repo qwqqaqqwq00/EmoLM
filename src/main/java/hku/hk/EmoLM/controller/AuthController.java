@@ -1,5 +1,6 @@
 package hku.hk.EmoLM.controller;
 
+import hku.hk.EmoLM.service.PasswordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,9 +20,12 @@ public class AuthController {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private PasswordService passwordService;
+
     @PostMapping("/login")
     public ResponseEntity<?> handleLogin(@RequestParam String username, @RequestParam String password) {
-        if (userService.authenticateUser(username, password)) {
+        if (userService.authenticateUser(username, passwordService.encryptPassword(password))) {
             return ResponseEntity.ok().body(Map.of("success", true, "message", "登录成功"));
         }
         return ResponseEntity.badRequest().body(Map.of("success", false, "error", "用户名或密码错误，请重试！"));
@@ -36,7 +40,7 @@ public class AuthController {
             if (!isValid) {
                 return ResponseEntity.badRequest().body(Map.of("success", false, "error", "验证码错误或已过期！"));
             }
-            if (userService.registerUser(username, password)) {
+            if (userService.registerUser(username, passwordService.encryptPassword(password))) {
                 return ResponseEntity.ok().body(Map.of("success", true, "message", "注册成功，请登录！"));
             }
         }

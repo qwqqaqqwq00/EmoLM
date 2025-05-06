@@ -5,17 +5,29 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class EmailService {
 
-    private final Map<String, String> verificationCodes = new HashMap<>();
+    private final Map<String, String> verificationCodes = new ConcurrentHashMap<>();
+    private final Map<String, Long> codeExpiryTimes = new ConcurrentHashMap<>();
+    private static final long CODE_EXPIRY_DURATION = 5 * 60 * 1000; // 5分钟
 
     @Autowired
     private JavaMailSender mailSender;
+
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
+    public EmailService() {
+        // 定时清理过期验证码
+        scheduler.scheduleAtFixedRate(this::removeExpiredCodes, 1, 1, TimeUnit.MINUTES);
+    }
 
     public String sendVerificationCode(String toEmail) {
         String code = generateVerificationCode();
@@ -24,6 +36,8 @@ public class EmailService {
         message.setSubject("邮箱验证码");
         message.setText("您的验证码是：" + code + "，请在5分钟内使用。");
         mailSender.send(message);
+        verificationCodes.put(toEmail, code);
+        codeExpiryTimes.put(toEmail, System.currentTimeMillis() + CODE_EXPIRY_DURATION);
         return code;
     }
 
@@ -34,6 +48,21 @@ public class EmailService {
     }
 
     public boolean verifyCode(String email, String code) {
-        return code.equals(verificationCodes.get(email)); // 验证验证码
+        String verifiedCode = verificationCodes.get(email);
+        Long expiryTime = codeExpiryTimes.get(email);
+
+        if (verifiedCode != null && expiryTime != null && System.currentTimeMillis() <= expiryTime) {
+            boolean isValid = code.equals(verifiedCode);
+            verificationCodes.remove(email);
+            codeExpiryTimes.remove(email);
+            return isValid;
+        }
+        return false;
+    }
+
+    private void removeExpiredCodes() {
+        long currentTime = System.currentTimeMillis();
+        codeExpiryTimes.entrySet().removeIf(entry -> currentTime > entry.getValue());
+        verificationCodes.keySet().removeIf(email -> !codeExpiryTimes.containsKey(email));
     }
 }
