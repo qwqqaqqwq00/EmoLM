@@ -2,12 +2,12 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Login from '@/components/Login.vue';
 import Register from "@/components/Register.vue";
 import Dashboard from "@/components/Dashboard.vue";
+import Chat from "@/components/Chat.vue";
 
 const routes = [
     {
         path: '/',
-        name: 'login',
-        component: Login,
+        redirect: '/login',
     },
     {
         path: '/login',
@@ -23,6 +23,11 @@ const routes = [
         path: '/dashboard',
         name: 'dashboard',
         component: Dashboard,
+    },
+    {
+        path: '/chat',
+        name: 'chat',
+        component: Chat,
     },
 ];
 
