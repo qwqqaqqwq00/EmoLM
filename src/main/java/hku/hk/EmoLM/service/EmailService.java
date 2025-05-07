@@ -1,6 +1,7 @@
 package hku.hk.EmoLM.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,9 @@ public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
+    @Value("${spring.mail.username}")
+    private String from;
+
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     public EmailService() {
@@ -32,13 +36,22 @@ public class EmailService {
     public String sendVerificationCode(String toEmail) {
         String code = generateVerificationCode();
         SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(from);
         message.setTo(toEmail);
         message.setSubject("邮箱验证码");
         message.setText("您的验证码是：" + code + "，请在5分钟内使用。");
-        mailSender.send(message);
-        verificationCodes.put(toEmail, code);
-        codeExpiryTimes.put(toEmail, System.currentTimeMillis() + CODE_EXPIRY_DURATION);
-        return code;
+        System.out.println(code);
+        try {
+            mailSender.send(message); // 发送邮件
+            verificationCodes.put(toEmail, code);
+            codeExpiryTimes.put(toEmail, System.currentTimeMillis() + CODE_EXPIRY_DURATION);
+            return code;
+        } catch (Exception e) {
+            // 增加详细日志记录
+            System.err.println("发送验证码失败: " + e.getMessage());
+            e.printStackTrace(); // 打印堆栈信息以便排查问题
+            throw new RuntimeException("邮件发送失败，请检查 SMTP 配置或网络连接！");
+        }
     }
 
     private String generateVerificationCode() {

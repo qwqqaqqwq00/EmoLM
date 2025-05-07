@@ -17,7 +17,7 @@ public class UserService {
     }
 
     // 注册新用户
-    public boolean registerUser(String username, String password) {
-        return userDao.registerUser(username, password);
+    public boolean registerUser(String username, String password, String email) {
+        return userDao.registerUser(username, password, email);
     }
 }

@@ -40,7 +40,7 @@ public class AuthController {
             if (!isValid) {
                 return ResponseEntity.badRequest().body(Map.of("success", false, "error", "验证码错误或已过期！"));
             }
-            if (userService.registerUser(username, passwordService.encryptPassword(password))) {
+            if (userService.registerUser(username, passwordService.encryptPassword(password), email)) {
                 return ResponseEntity.ok().body(Map.of("success", true, "message", "注册成功，请登录！"));
             }
         }
@@ -55,7 +55,8 @@ public class AuthController {
 
     @PostMapping("/sendVerifyCode")
     public ResponseEntity<?> sendVerifyCode(@RequestParam String email) {
-        String emailRegex = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
+        System.out.println(email);
+        String emailRegex = "^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$";
         if (!email.matches(emailRegex)) {
             return ResponseEntity.badRequest().body(Map.of("success", false, "error", "邮箱格式不正确，请重试！"));
         }

@@ -19,8 +19,8 @@ public class UserDao {
     }
 
     // 注册新用户
-    public boolean registerUser(String username, String password) {
-        String query = "INSERT INTO users (username, password) VALUES (?, ?)";
-        return jdbcTemplate.update(query, username, password) > 0;
+    public boolean registerUser(String username, String password, String email) {
+        String query = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
+        return jdbcTemplate.update(query, username, password, email) > 0;
     }
 }
