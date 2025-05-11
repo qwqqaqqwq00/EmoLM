@@ -39,7 +39,7 @@ export default {
       this.$router.push("/chat");
     },
     handleLogout() {
-      this.$axios.post("/api/logout")
+      this.$axios.get("/api/logout")
           .then(() => {
             alert("已成功退出登录");
             this.$router.push("/");

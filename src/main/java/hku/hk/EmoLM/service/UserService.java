@@ -13,7 +13,7 @@ public class UserService {
 
     // 验证用户登录
     public boolean authenticateUser(String username, String password) {
-        return userDao.authenticateUser(username, password);
+        return userDao.authenticateUser(username, password) != null;
     }
 
     // 注册新用户
