@@ -42,4 +42,13 @@ const router = createRouter({
     routes,
 });
 
+routes.beforeEach((to, from, next) => {
+    const token = localStorage.getItem('token');
+    if(to.path !== '/login' && this.$axios.post('api/isAuthenticated', new URLSearchParams({'token': token})) === true){
+        next('/login');
+    } else {
+        next();
+    }
+});
+
 export default router;

@@ -47,6 +47,15 @@ public class AuthController {
         return ResponseEntity.badRequest().body(Map.of("success", false, "error", "密码不匹配或注册失败，请重试！"));
     }
 
+    @PostMapping("/isAuthenticated")
+    public ResponseEntity<?> isAuthenticated(@RequestParam String token) {
+        if (token != null && !token.isEmpty()) {
+            return ResponseEntity.ok().body(Map.of("success", true, "message", "已登录"));
+        } else {
+            return ResponseEntity.ok().body(Map.of("success", false, "message", "未登录"));
+        }
+    }
+
     @GetMapping("/logout")
     public ResponseEntity<?> handleLogout() {
         // 实现登出逻辑（这里可以添加清理会话等操作）
