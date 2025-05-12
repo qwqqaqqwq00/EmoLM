@@ -4,9 +4,13 @@
       <div class="messages-content"
            v-for="msg in messages"
            :key="msg.id"
-           :class="{ 'human-message': msg.role === 'human', 'assistant-message': msg.role !== 'human' }"
+           :class="{ 'message-personal': msg.role === 'human', 'message': msg.role !== 'human', 'new': msg.isNew }"
       >
-        {{msg.value}}
+        <div class="avatar" v-if="msg.avatar">
+          <img :src="msg.avatar" alt="Avatar" />
+        </div>
+        <span>{{ msg.value }}</span>
+        <div class="timestamp">{{ formatTimestamp(msg.timestamp) }}</div>
       </div>
     </div>
     <form class="chat-window" @submit.prevent="sendMessage">
@@ -45,9 +49,9 @@ export default {
   data() {
     return {
       messages: [
-        { id: 1, value: 'Are we meeting today?', role: 'assistant' },
-        { id: 2, value: 'Yes, what time suits you?', role: 'human' },
-        { id: 3, value: 'I was thinking after lunch, I have a meeting in the morning.', role: 'assistant' },
+        { id: 1, value: 'Are we meeting today?', role: 'assistant', timestamp: new Date(), avatar: require('@/assets/robot.jpg'), isNew: false },
+        { id: 2, value: 'Yes, what time suits you?', role: 'human', timestamp: new Date(), avatar: null, isNew: false },
+        { id: 3, value: 'I was thinking after lunch, I have a meeting in the morning.', role: 'assistant', timestamp: new Date(), avatar: require('@/assets/robot.jpg'), isNew: true },
       ],
       newMessage: '',
       showUploadCard: false,
@@ -61,6 +65,9 @@ export default {
         id: this.messages.length + 1,
         value: this.newMessage,
         role: 'human',
+        timestamp: new Date(),
+        avatar: null,
+        isNew: true,
       });
       this.newMessage = '';
       this.$nextTick(() => {
@@ -74,6 +81,9 @@ export default {
     updateFileList(newFileList) {
       this.fileList = newFileList;
     },
+    formatTimestamp(date) {
+      return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    },
   },
 };
 </script>
@@ -84,59 +94,173 @@ export default {
   flex-direction: column;
   height: 100vh;
   width: 100%;
-  align-items: center; /* Center children horizontally */
+  align-items: center;
 }
 
-/* Style for .messages-box: 50% width, full height minus chat-window */
+/* Messages box: 50% width, scrollable */
 .messages-box {
   width: 100%;
-  flex: 1; /* Takes available height minus chat-window */
-  background-color: lightgray; /* For visibility */
-  overflow-y: auto; /* Scrollable content */
+  flex: 1;
+  background-color: #f5f5f5;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
-}
-
-/* Style for .messages-content: Individual messages */
-.messages-content {
   padding: 10px;
-  border-bottom: 1px solid #ddd; /* For visibility */
+  box-sizing: border-box;
+  border-radius: 15px;
 }
 
-.human-message {
+/* Messages content: Base bubble styles */
+.messages-content {
+  max-width: 100%;
+  margin: 8px 0 8px 40px;
+  padding: 6px 10px 7px;
+  border-radius: 10px 10px 10px 0;
+  background: lightslategray;
+  font-size: 14px;
+  line-height: 1.4;
+  position: relative;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  color: rgba(255, 255, 255, 0.9);
+  align-self: flex-start; /* Default: left for assistant */
+}
+
+/* Timestamp */
+.messages-content .timestamp {
+  position: absolute;
+  bottom: -15px;
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.3);
+  left: 0;
+}
+
+/* Triangle tail for assistant messages */
+.messages-content::before {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  border-top: 6px solid transparent;
+  left: 0;
+  border-right: 7px solid transparent;
+}
+
+/* Avatar */
+.messages-content .avatar {
+  position: absolute;
+  z-index: 1;
+  bottom: -15px;
+  left: -40px;
+  border-radius: 30px;
+  width: 30px;
+  height: 30px;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  border: 2px solid rgba(255, 255, 255, 0.24);
+}
+
+.messages-content .avatar img {
+  width: 100%;
+  height: auto;
+}
+
+/* Human messages: Right-aligned */
+.message-personal {
   align-self: flex-end;
-  background-color: #007bff;
-  color: white;
-  border-bottom-right-radius: 5px; /* Flatter corner on user side */
+  color: #fff;
+  text-align: right;
+  background: #253237;
+  border-radius: 10px 10px 0 10px;
 }
 
-/* Assistant messages: Left-aligned, gray background */
-.assistant-message {
-  align-self: flex-start;
-  background-color: #e9ecef;
-  color: black;
-  border-bottom-left-radius: 5px; /* Flatter corner on assistant side */
+.message-personal::before {
+  left: auto;
+  right: 0;
+  border-right: none;
+  border-left: 5px solid transparent;
+  border-top: 4px solid transparent;
+  bottom: -4px;
 }
 
-/* Style for .chat-window: 50% width, pinned to bottom */
+.message-personal .timestamp {
+  right: 0;
+  left: auto;
+}
+
+/* Last message margin */
+.messages-content:last-child {
+  margin-bottom: 30px;
+}
+
+/* Bounce animation for new messages */
+.messages-content.new {
+  transform: scale(0);
+  transform-origin: 0 0;
+  animation: bounce 500ms linear both;
+}
+
+@keyframes bounce {
+  0% {
+    transform: matrix3d(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+  }
+  4.7% {
+    transform: matrix3d(0.45, 0, 0, 0, 0, 0.45, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+  }
+  9.41% {
+    transform: matrix3d(0.883, 0, 0, 0, 0, 0.883, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+  }
+  14.11% {
+    transform: matrix3d(1.141, 0, 0, 0, 0, 1.141, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+  }
+  18.72% {
+    transform: matrix3d(1.212, 0, 0, 0, 0, 1.212, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+  }
+  24.32% {
+    transform: matrix3d(1.151, 0, 0, 0, 0, 1.151, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+  }
+  29.93% {
+    transform: matrix3d(1.048, 0, 0, 0, 0, 1.048, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+  }
+  35.54% {
+    transform: matrix3d(0.979, 0, 0, 0, 0, 0.979, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+  }
+  41.04% {
+    transform: matrix3d(0.961, 0, 0, 0, 0, 0.961, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+  }
+  52.15% {
+    transform: matrix3d(0.991, 0, 0, 0, 0, 0.991, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+  }
+  63.26% {
+    transform: matrix3d(1.007, 0, 0, 0, 0, 1.007, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+  }
+  85.49% {
+    transform: matrix3d(0.999, 0, 0, 0, 0, 0.999, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+  }
+  100% {
+    transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+  }
+}
+
+/* Chat window: Pinned to bottom */
 .chat-window {
   width: 100%;
-  background-color: white; /* For visibility */
+  background: #26282a;
   padding: 10px;
   box-sizing: border-box;
   position: sticky;
   bottom: 0;
-  z-index: 10; /* Ensure it stays above messages */
+  z-index: 10;
+  border-radius: 15px;
 }
 
-/* Style for .chat-input-container: Input and upload icon */
+/* Chat input container */
 .chat-input-container {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-/* Style for input */
+/* Input styling */
 .chat-window-message {
   flex: 1;
   padding: 8px;
@@ -144,26 +268,14 @@ export default {
   border-radius: 4px;
 }
 
-/* Style for upload icon */
+/* Upload icon */
 .bi-upload {
   cursor: pointer;
 }
 
-/* Style for file list */
+/* File list */
 .chat-window > div {
   padding: 5px 0;
 }
 
-/* Style for UploadCard (assumed to be a modal/overlay) */
-.upload-card {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: white;
-  padding: 20px;
-  border: 1px solid #ccc;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  z-index: 100;
-}
 </style>
