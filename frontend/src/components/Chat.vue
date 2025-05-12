@@ -1,6 +1,6 @@
 <template>
   <div class="chat-thread">
-    <div class="messages-box">
+    <div class="messages-box" ref="chatContainer">
       <div class="messages-content"
            v-for="msg in messages"
            :key="msg.id"
@@ -58,6 +58,11 @@ export default {
       fileList: [],
     };
   },
+  mounted() {
+    this.$nextTick(() => {
+      this.scrollToBottom();
+    });
+  },
   methods: {
     sendMessage() {
       if (this.newMessage.trim() === '') return;
@@ -73,6 +78,7 @@ export default {
       this.$nextTick(() => {
         const chatThread = document.querySelector('.chat-thread');
         chatThread.scrollTop = chatThread.scrollHeight;
+        this.scrollToBottom();
       });
     },
     toggleUploadCard() {
@@ -84,6 +90,12 @@ export default {
     formatTimestamp(date) {
       return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     },
+    scrollToBottom() {
+      const container = this.$refs.chatContainer;
+      if (container) {
+        container.scrollTop = container.scrollHeight;
+      }
+    },
   },
 };
 </script>
@@ -92,7 +104,7 @@ export default {
 .chat-thread {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
   width: 100%;
   align-items: center;
 }
@@ -100,6 +112,7 @@ export default {
 /* Messages box: 50% width, scrollable */
 .messages-box {
   width: 100%;
+  height: 80%;
   flex: 1;
   background-color: #f5f5f5;
   overflow-y: auto;

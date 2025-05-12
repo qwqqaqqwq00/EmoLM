@@ -37,7 +37,7 @@ export default {
   display:  flex;
   flex-direction: row;
   align-items: center;
-  height: 100vh; /* 100% of viewport height */
+  height: 93vh; /* 100% of viewport height */
   width: 102%; /* Full width */
   background: #35393b;
 }

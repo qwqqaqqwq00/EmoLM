@@ -52,8 +52,7 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
-  background-color: #35393b;
-  color: #fff;
+  background-color: #2e2e2e;
   position: fixed;
   top: 0;
   left: 0;
