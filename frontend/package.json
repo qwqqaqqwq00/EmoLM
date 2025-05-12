@@ -20,7 +20,8 @@
     "vue": "^3.2.13",
     "vue-advanced-chat": "^2.1.0",
     "vue-router": "^4.5.1",
-    "vue3-beautiful-chat": "^3.4.2"
+    "vue3-beautiful-chat": "^3.4.2",
+    "bootstrap-vue": "^2.23.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

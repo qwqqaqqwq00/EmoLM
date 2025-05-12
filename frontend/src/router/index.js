@@ -2,7 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Login from '@/components/Login.vue';
 import Register from "@/components/Register.vue";
 import Dashboard from "@/components/Dashboard.vue";
-import Chat from "@/components/Chat.vue";
+import ChatDashboard from "@/components/ChatBoard.vue";
+import UploadCard from "@/components/UploadCard.vue";
 
 const routes = [
     {
@@ -27,8 +28,13 @@ const routes = [
     {
         path: '/chat',
         name: 'chat',
-        component: Chat,
+        component: ChatDashboard,
     },
+    {
+        path: '/card',
+        name: 'uploader',
+        component: UploadCard,
+    }
 ];
 
 const router = createRouter({
