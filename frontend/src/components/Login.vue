@@ -16,8 +16,8 @@
         />
         <label>密码</label>
       </div>
-      <el-button type="primary" @click="handleLogin">登录</el-button>
-      <el-button type="primary" @click="gotoReg">注册</el-button>
+      <el-button type="primary" round @click="handleLogin">登录</el-button>
+      <el-button type="primary" round @click="gotoReg">注册</el-button>
     </form>
   </div>
 </template>
@@ -52,10 +52,6 @@ export default {
 </script>
 
 <style scoped>
-
-html {
-  height: 100%;
-}
 
 .login-box {
   position: absolute;

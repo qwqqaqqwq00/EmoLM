@@ -38,10 +38,11 @@
         />
         <label>验证码</label>
       </div>
-      <el-button type="primary" :disabled="isSending" @click="sendVerifyCode">
+      <el-button type="primary" round :disabled="isSending" @click="sendVerifyCode">
         {{ isSending ? `${countdown}s` : "发送验证码" }}
       </el-button>
-      <el-button type="primary" @click="handleRegister">注册</el-button>
+      <el-button type="primary" round @click="handleLogin">登录</el-button>
+      <el-button type="primary" round @click="handleRegister">注册</el-button>
     </form>
   </div>
 </template>
@@ -84,6 +85,9 @@ export default {
         }
       })
     },
+    handleLogin() {
+      this.$router.push("/");
+    },
     handleRegister() {
       const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,16}$/;
       if (!passwordRegex.test(this.password)) {
@@ -112,9 +116,6 @@ export default {
 </script>
 
 <style scoped>
-html {
-  height: 100%;
-}
 
 .login-box {
   position: absolute;

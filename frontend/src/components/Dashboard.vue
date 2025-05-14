@@ -1,31 +1,20 @@
 <template>
-  <el-container>
-    <h1>欢迎来到仪表盘</h1>
-    <div class="buttons">
-      <el-button type="primary" @click="handleChat">开始聊天</el-button>
-      <el-button type="danger" @click="handleLogout">退出登录</el-button>
+  <el-container class="container">
+    <CodeDriveAnimTitle class="background"/>
+    <div class="content">
+      <div class="buttons">
+        <div class="primary" @click="handleChat">开始聊天</div><div class="secondary" @click="handleLogout">退出登录</div>
+      </div>
     </div>
-
-    <el-upload
-        class="upload-demo"
-        :action="uploadUrl"
-        :on-success="handleUploadSuccess"
-        :on-error="handleUploadError"
-        :headers="uploadHeaders"
-        :before-upload="validateFile"
-        accept="video/*,image/*"
-        drag
-    >
-      <i class="el-icon-upload"></i>
-      <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-      <div class="el-upload__tip">仅支持视频和图像文件，大小不超过10MB</div>
-    </el-upload>
   </el-container>
 </template>
 
 <script>
+import CodeDriveAnimTitle from "@/components/CodeDriveAnimTitle.vue";
+
 export default {
   name: "UserDashboard",
+  components: {CodeDriveAnimTitle},
   data() {
     return {
       uploadUrl: "/api/files/upload",
@@ -69,21 +58,58 @@ export default {
 };
 </script>
 
-<style scoped>
-.el-container {
+<style>
+.container {
+  position: relative;
+  width: 100%;
+  height: 93vh;
+  overflow: hidden;
+  flex-direction: column;
+}
+
+.background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0; /* 背景层 */
+}
+
+.content {
+  position: relative;
+  z-index: 1; /* 内容层，确保在背景上方 */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  background: linear-gradient(135deg, #00bcd4, #2196f3); /* 渐变背景 */
+  height: 100%;
+  width: 100%;
   color: #fff;
-  position: relative;
 }
 
+.buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
 
-.upload-demo {
-  margin-top: 20px;
-  width: 50%;
+.primary, .secondary {
+  background: linear-gradient(90deg, #21c407, #3164f8);
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 15px;
+  border: 2px solid transparent; /* 默认边框透明 */
+  background-clip: padding-box;
+  transition: border-color 0.3s ease; /* 添加过渡效果 */
+}
+
+.secondary {
+  background: linear-gradient(90deg, #ee8020, #ee2421);
+  background-clip: padding-box;
+}
+
+.primary:hover, .secondary:hover {
+  border-color: #fff; /* 悬停时显示白色边框 */
 }
 </style>

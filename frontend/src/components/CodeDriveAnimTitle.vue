@@ -72,14 +72,14 @@ export default {
       </mask>
       <g font-size="150">
         <g mask="url(#maskLeft)" fill="#fff" class="left">
-          <text y="120">CODE</text>
-          <text y="250">DRIVEN</text>
-          <text y="380">ANIMATION</text>
+          <text y="120">WELCOME</text>
+          <text y="250">TO</text>
+          <text y="380">DASHBOARD</text>
         </g>
         <g mask="url(#maskRight)" fill="#aaa" class="right">
-          <text y="120">CODE</text>
-          <text y="250">DRIVEN</text>
-          <text y="380">ANIMATION</text>
+          <text y="120">WELCOME</text>
+          <text y="250">TO</text>
+          <text y="380">DASHBOARD</text>
         </g>
       </g>
     </svg>
