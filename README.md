@@ -1,4 +1,7 @@
-## Technique Used
+# Technique Used
+
+## Frontend
+
 ### Background visual element
 GSAP (GreenSock Animation Platform): A JavaScript library for high-performance animations, used to create complex animations for SVG elements, including timeline-based animations and pointer-based interactions.  
 
@@ -9,6 +12,53 @@ pointer horizontal position `e.x` projection in range of `[0, 1]`: $`\text{progr
 
 reference:
 https://codepen.io/creativeocean/pen/qEWOgjR
+### Title animation on focusing login text input
+
+### Capsule button and on hover animation
+
+### Transition animation
+
+### Dashboard button on hover animation(top, button expand animation)
+
+### Chat message controller
+
+### Chat message box scroller(removed triangle, consistent the capsule scroller)
+
+### Upload button/user menu/config menu with icon
+
+### Uploader for file transfer
+
+### Uploader page z-index to top
+
+### Transparent background of Uploader
+
+### Chat message sending animation
+
+### Chat message sending time visualization
+
+## Backend
+
+### MVC Design
+
+### MySQL/ JDBC connection
+
+### Authentication table design
+
+### Controller with Authentication
+
+#### Email verification
+
+#### Register form / User password with MD5 encryption and add salt
+
+#### Login form / use COUNT(*) to avoid SQL injection
+
+### FileController interact with FileService
+
+### File cleanup service
+
+# Demo
+
+## Images
 
 ![login.png](frontend/public/login.png)
 
