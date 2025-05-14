@@ -4,6 +4,7 @@ import Register from "@/components/Register.vue";
 import Dashboard from "@/components/Dashboard.vue";
 import ChatDashboard from "@/components/ChatBoard.vue";
 import UploadCard from "@/components/UploadCard.vue";
+import CodeDriveAnimTitle from "@/components/CodeDriveAnimTitle.vue";
 
 const routes = [
     {
@@ -34,6 +35,11 @@ const routes = [
         path: '/card',
         name: 'uploader',
         component: UploadCard,
+    },
+    {
+        path: '/animTitle',
+        name: 'animTitle',
+        component: CodeDriveAnimTitle,
     }
 ];
 

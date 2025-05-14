@@ -33,12 +33,19 @@ export default {
 </template>
 
 <style>
+body {
+  background-color: #000;
+  color: #fff; /* 建议也设置字体颜色为白色，确保可读性 */
+  margin: 0; /* 避免默认白边 */
+  padding: 0;
+}
+
 .chat-board {
   display:  flex;
   flex-direction: row;
-  align-items: center;
+  align-items: stretch;
   height: 93vh; /* 100% of viewport height */
-  width: 102%; /* Full width */
+  width: 100%; /* Full width */
   background: #35393b;
 }
 
@@ -48,6 +55,8 @@ export default {
   height: 100%; /* Full height of .chat-board */
   overflow-y: auto; /* Scroll if content overflows */
   background: #35393b;
+  padding: 0;
+  margin: 0;
 }
 
 /* Style for .chat-window: 50% width, full height */

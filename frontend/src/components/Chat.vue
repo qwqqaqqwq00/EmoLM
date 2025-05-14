@@ -114,7 +114,7 @@ export default {
   width: 100%;
   height: 80%;
   flex: 1;
-  background-color: #f5f5f5;
+  background-color: #454545;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -278,12 +278,14 @@ export default {
   flex: 1;
   padding: 8px;
   border: 1px solid #ccc;
+  background: #222;
   border-radius: 4px;
 }
 
 /* Upload icon */
 .bi-upload {
   cursor: pointer;
+  color: #ccc;
 }
 
 /* File list */

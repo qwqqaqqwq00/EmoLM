@@ -81,9 +81,6 @@ export default {
   position: relative;
 }
 
-.a-waves {
-
-}
 
 .upload-demo {
   margin-top: 20px;

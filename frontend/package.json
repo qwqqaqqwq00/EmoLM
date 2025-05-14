@@ -11,17 +11,18 @@
     "@kousum/semi-ui-vue": "^2.78.4",
     "@waaark/luge": "0.6.1-beta",
     "axios": "^1.9.0",
+    "bootstrap-vue": "^2.23.1",
     "core-js": "^3.8.3",
     "element-plus": "^2.9.9",
     "element-ui": "^2.15.14",
+    "gsap": "^3.13.0",
     "jquery": "^3.7.1",
     "sass": "^1.87.0",
     "sass-loader": "^16.0.5",
     "vue": "^3.2.13",
     "vue-advanced-chat": "^2.1.0",
     "vue-router": "^4.5.1",
-    "vue3-beautiful-chat": "^3.4.2",
-    "bootstrap-vue": "^2.23.1"
+    "vue3-beautiful-chat": "^3.4.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
