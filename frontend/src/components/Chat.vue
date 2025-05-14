@@ -14,8 +14,15 @@
       </div>
     </div>
     <form class="chat-window" @submit.prevent="sendMessage">
-      <div v-for="file in fileList" :key="file.name">
-        <div>{{ file.name }}</div>
+      <div class="file-list-container">
+        <div v-for="file in fileList" :key="file.name">
+          <div class="file-card">
+            <svg class="file-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zM13 3.5L18.5 9H14V3.5zM6 20V4h6v5h5v11H6z"/>
+            </svg>
+            <span class="file-name">{{ file.name }}</span>
+          </div>
+        </div>
       </div>
       <div class="chat-input-container">
         <input
@@ -305,5 +312,37 @@ export default {
 .messages-box::-webkit-scrollbar-thumb {
   background: #aaa; /* 滚动条颜色 */
   border-radius: 4px; /* 圆角 */
+}
+
+.file-list-container {
+  display: flex;
+  flex-wrap: wrap; /* 允许换行 */
+  gap: 10px; /* 控制卡片之间的间距 */
+}
+
+.file-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: #2c3e50;
+  color: #fff;
+  border-radius: 20px;
+  font-size: 14px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  margin: 5px 0;
+}
+
+.file-icon {
+  width: 20px;
+  height: 20px;
+  fill: #03a9f4;
+}
+
+.file-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

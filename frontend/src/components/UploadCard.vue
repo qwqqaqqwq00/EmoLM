@@ -68,8 +68,8 @@ export default {
         accept="video/*,image/*"
         drag
     >
-      <div>
-        <div>
+      <div class="box1">
+        <div class="box2">
           <button class="upload-area">
             <span class="upload-area-title">拖拽文件到此处上传</span>
             <span class="upload-area-description">或<strong>点击选择文件</strong></span>
@@ -98,6 +98,7 @@ export default {
   border-radius: 8px;
   z-index: 1000;
   border: 1px solid rgba(255, 255, 255, 0.3); /* 边框增强效果 */
+  color: #fff;
 }
 .extern-card {
   position: fixed;
@@ -113,12 +114,22 @@ export default {
   z-index: 1000;
   border: 1px solid rgba(255, 255, 255, 0.3); /* 边框增强效果 */
 }
+.upload-demo {
+  background-color: #1e1e1e; /* 设置深色背景 */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* 调整边框颜色 */
+}
+
+/deep/ .el-upload-dragger {
+  background-color: #2e2e2e !important;
+  border-color: #555 !important;
+  color: #ccc !important;
+}
 
 .upload-area {
   margin-top: 1.25rem;
   border: .25rem;
   background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='%23ccc' stroke-width='3' stroke-dasharray='6%2c 14' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
-  background-color: transparent;
+  background-color: #1e1e1e;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   padding: 3rem;
@@ -129,6 +140,7 @@ export default {
 }
 
 .upload-area:hover, .upload-area:focus {
+  background-color: #2a2a2a;
   background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='%232e44ff' stroke-width='3' stroke-dasharray='6%2c 14' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
   cursor: pointer;
 }
