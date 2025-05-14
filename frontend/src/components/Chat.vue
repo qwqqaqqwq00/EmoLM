@@ -279,6 +279,7 @@ export default {
   padding: 8px;
   border: 1px solid #ccc;
   background: #222;
+  color: #fff;
   border-radius: 4px;
 }
 
@@ -293,4 +294,16 @@ export default {
   padding: 5px 0;
 }
 
+.messages-box::-webkit-scrollbar {
+  width: 8px; /* 滚动条宽度 */
+}
+
+.messages-box::-webkit-scrollbar-track {
+  background: transparent; /* 滚动条轨道背景 */
+}
+
+.messages-box::-webkit-scrollbar-thumb {
+  background: #aaa; /* 滚动条颜色 */
+  border-radius: 4px; /* 圆角 */
+}
 </style>
