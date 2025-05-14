@@ -3,7 +3,7 @@
     <CodeDriveAnimTitle class="background"/>
     <div class="content">
       <div class="buttons">
-        <div class="primary" @click="handleChat">开始聊天</div><div class="secondary" @click="handleLogout">退出登录</div>
+        <div class="btn primary" @click="handleChat">开始聊天</div><div class="btn secondary" @click="handleLogout">退出登录</div>
       </div>
     </div>
   </el-container>
@@ -58,7 +58,9 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
+$white: #fff;
+
 .container {
   position: relative;
   width: 100%;
@@ -85,6 +87,7 @@ export default {
   justify-content: center;
   height: 100%;
   width: 100%;
+  top: 50%;
   color: #fff;
 }
 
@@ -94,22 +97,92 @@ export default {
   gap: 20px;
 }
 
-.primary, .secondary {
-  background: linear-gradient(90deg, #21c407, #3164f8);
+.btn {
+  color: #fff;
   cursor: pointer;
-  padding: 10px;
-  border-radius: 15px;
-  border: 2px solid transparent; /* 默认边框透明 */
-  background-clip: padding-box;
-  transition: border-color 0.3s ease; /* 添加过渡效果 */
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 45px;
+  margin: 0 0 2em;
+  max-width: 160px;
+  position: relative;
+  text-decoration: none;
+  text-transform: uppercase;
+  width: 100%;
+  border: none; /* 默认无边框 */
+  transition: all 1000ms linear;
+
+  &:hover {
+    border-top: 0px solid #fff !important; /* 添加上边框 */
+    border-bottom: 0px solid #fff !important; /* 添加下边框 */
+    border-left: none !important; /* 确保无左边框 */
+    border-right: none !important; /* 确保无右边框 */
+  }
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background-color: #fff;
+    transition: all 0.3s ease;
+  }
+
+  &::before {
+    top: 0; /* 上边框 */
+  }
+
+  &::after {
+    bottom: 0; /* 下边框 */
+  }
+
+  &:hover::before,
+  &:hover::after {
+    width: 100%; /* 从中间扩展到两侧 */
+    left: 0;
+  }
 }
 
-.secondary {
-  background: linear-gradient(90deg, #ee8020, #ee2421);
-  background-clip: padding-box;
-}
+.btn.secondary {
+  color: #fff;
+  background-color: transparent;
+  border: none;
+  transition: all 0.3s ease;
 
-.primary:hover, .secondary:hover {
-  border-color: #fff; /* 悬停时显示白色边框 */
+  &:hover {
+    color: red; /* 设置 hover 时的文字颜色为红色 */
+  }
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background-color: #fff;
+    transition: all 0.3s ease;
+  }
+
+  &::before {
+    top: 0; /* 上边框 */
+  }
+
+  &::after {
+    bottom: 0; /* 下边框 */
+  }
+
+  &:hover {
+    color: red; /* 设置文字颜色变红 */
+  }
+
+  &:hover::before,
+  &:hover::after {
+    width: 100%; /* 从中间扩展到两侧 */
+    left: 0;
+    background-color: red; /* 设置上下边框变红 */
+  }
 }
 </style>

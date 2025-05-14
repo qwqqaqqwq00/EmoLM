@@ -1,6 +1,6 @@
 <template>
   <header class="chat-header">
-    <a href="/chat" class="chat-link">返回聊天</a>
+    <a href="/chat" class="chat-link">EmoLM</a>
     <div class="config-menu">
       <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <circle cx="12" cy="12" r="3"/>
@@ -112,15 +112,20 @@ export default {
 .config-menu .icon {
   width: 24px; /* 设置 svg 的宽度 */
   height: 24px; /* 设置 svg 的高度 */
-  color: #fff; /* 设置颜色 */
+  color: #ccc; /* 设置颜色 */
+}
+
+.config-menu .icon:hover {
+  color: #fff;
+  cursor: pointer;
 }
 
 .dropdown-menu {
   position: absolute;
   top: 50px;
   right: 0;
-  background-color: #fff;
-  color: #000;
+  background-color: #444;
+  color: #fff;
   border: 1px solid #ccc;
   border-radius: 5px;
   list-style: none;
@@ -139,6 +144,6 @@ export default {
 }
 
 .dropdown-menu li:hover {
-  background-color: #f5f5f5;
+  background-color: #222;
 }
 </style>

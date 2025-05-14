@@ -288,12 +288,19 @@ export default {
   background: #222;
   color: #fff;
   border-radius: 4px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 /* Upload icon */
 .bi-upload {
   cursor: pointer;
   color: #ccc;
+}
+
+.bi-upload :hover {
+  color: #fff;
 }
 
 /* File list */
