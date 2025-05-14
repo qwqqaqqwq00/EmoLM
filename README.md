@@ -12,29 +12,37 @@ pointer horizontal position `e.x` projection in range of `[0, 1]`: $`\text{progr
 
 reference:
 https://codepen.io/creativeocean/pen/qEWOgjR
-### Title animation on focusing login text input
+### Animations
 
-### Capsule button and on hover animation
+#### Title animation on focusing login text input
 
-### Transition animation
+#### Capsule button and on hover animation
 
-### Dashboard button on hover animation(top, button expand animation)
+#### Transition animation
 
-### Chat message controller
+#### Dashboard button on hover animation(top, button expand animation)
 
-### Chat message box scroller(removed triangle, consistent the capsule scroller)
+### Chat message box
 
-### Upload button/user menu/config menu with icon
+#### Chat message controller
 
-### Uploader for file transfer
+#### Chat message box scroller(removed triangle, consistent the capsule scroller)
 
-### Uploader page z-index to top
+### Uploader
 
-### Transparent background of Uploader
+#### Upload button/user menu/config menu with icon
 
-### Chat message sending animation
+#### Uploader for file transfer
 
-### Chat message sending time visualization
+#### Uploader page z-index to top
+
+#### Transparent background of Uploader
+
+### Chat message input
+
+#### Chat message sending animation
+
+#### Chat message sending time visualization
 
 ## Backend
 
@@ -54,7 +62,7 @@ https://codepen.io/creativeocean/pen/qEWOgjR
 
 ### FileController interact with FileService
 
-### File cleanup service
+#### File cleanup service
 
 # Demo
 
