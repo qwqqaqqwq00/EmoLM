@@ -1,6 +1,6 @@
 <template>
   <el-container class="container">
-    <CodeDriveAnimTitle class="background"/>
+    <CodeDriveAnimTitle class="background" :titles="titles"/>
     <div class="content">
       <div class="buttons">
         <div class="btn primary" @click="handleChat">开始聊天</div><div class="btn secondary" @click="handleLogout">退出登录</div>
@@ -21,6 +21,7 @@ export default {
       uploadHeaders: {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
+      titles: ["WELCOME", "TO", "DASHBOARD"],
     };
   },
   methods: {

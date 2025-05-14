@@ -1,4 +1,5 @@
 <template>
+  <CodeDriveAnimTitle :titles="titles"/>
   <div class="login-box">
     <form @submit.prevent="handleLogin">
       <div class="user-box">
@@ -23,12 +24,17 @@
 </template>
 
 <script>
+import CodeDriveAnimTitle from "@/components/CodeDriveAnimTitle.vue";
+
 export default {
-  name: "UserLogin", // 修改为多单词名称
+  name: "UserLogin",
+  components: {CodeDriveAnimTitle},
+ // 修改为多单词名称
   data() {
     return {
       username: "",
       password: "",
+      titles: ["LOGIN", "TO", "EmoLM"],
     };
   },
   methods: {

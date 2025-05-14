@@ -1,4 +1,5 @@
 <template>
+  <CodeDriveAnimTitle :titles="titles" />
   <div class="login-box">
     <form @submit.prevent="handleRegister">
       <div class="user-box">
@@ -48,8 +49,11 @@
 </template>
 
 <script>
+import CodeDriveAnimTitle from "@/components/CodeDriveAnimTitle.vue";
+
 export default {
   name: "UserRegister",
+  components: {CodeDriveAnimTitle},
   data() {
     return {
       username: "",
@@ -59,6 +63,7 @@ export default {
       verifyCode: "",
       isSending: false,
       countdown: 60,
+      titles: ["REGISTER", "TO", "EmoLM"]
     };
   },
   methods: {

@@ -2,6 +2,12 @@
 import { gsap } from "gsap";
 
 export default {
+  props: {
+    titles: {
+      type: Array,
+      required: true,
+    },
+  },
   mounted() {
     const container = this.$el; // 限制动画范围到当前组件
     const tl = gsap.timeline({
@@ -72,14 +78,10 @@ export default {
       </mask>
       <g font-size="150">
         <g mask="url(#maskLeft)" fill="#fff" class="left">
-          <text y="120">WELCOME</text>
-          <text y="250">TO</text>
-          <text y="380">DASHBOARD</text>
+          <text v-for="(title, index) in titles" :key="'left-' + index" :y="120 + index * 130">{{ title }}</text>
         </g>
         <g mask="url(#maskRight)" fill="#aaa" class="right">
-          <text y="120">WELCOME</text>
-          <text y="250">TO</text>
-          <text y="380">DASHBOARD</text>
+          <text v-for="(title, index) in titles" :key="'left-' + index" :y="120 + index * 130">{{ title }}</text>
         </g>
       </g>
     </svg>
