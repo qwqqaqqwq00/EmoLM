@@ -49,7 +49,6 @@ public class EmailService {
         } catch (Exception e) {
             // 增加详细日志记录
             System.err.println("发送验证码失败: " + e.getMessage());
-            e.printStackTrace(); // 打印堆栈信息以便排查问题
             throw new RuntimeException("邮件发送失败，请检查 SMTP 配置或网络连接！");
         }
     }

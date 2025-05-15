@@ -5,8 +5,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -61,9 +61,9 @@ public class FileService {
         File uploadDir = new File(UPLOAD_DIR);
         long currentTime = System.currentTimeMillis();
 
-        for (File file : uploadDir.listFiles()) {
+        for (File file : Objects.requireNonNull(uploadDir.listFiles())) {
             if (currentTime - file.lastModified() > 24 * 60 * 60 * 1000) { // 超过24小时
-                file.delete();
+                file.deleteOnExit();
             }
         }
     }

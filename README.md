@@ -58,7 +58,11 @@ https://codepen.io/creativeocean/pen/qEWOgjR
 
 #### Register form / User password with MD5 encryption and add salt
 
-#### Login form / use COUNT(*) to avoid SQL injection
+To prevent rainbow table attack...
+
+#### Login form
+
+use COUNT(*) to avoid SQL injection
 
 ### FileController interact with FileService
 

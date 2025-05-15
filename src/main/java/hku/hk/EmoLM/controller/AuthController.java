@@ -64,7 +64,6 @@ public class AuthController {
 
     @PostMapping("/sendVerifyCode")
     public ResponseEntity<?> sendVerifyCode(@RequestParam String email) {
-        System.out.println(email);
         String emailRegex = "^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$";
         if (!email.matches(emailRegex)) {
             return ResponseEntity.badRequest().body(Map.of("success", false, "error", "邮箱格式不正确，请重试！"));
