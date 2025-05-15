@@ -77,8 +77,10 @@ export default {
         </div>
       </div>
     </el-upload>
-    <button class="btn-secondary" @click="toggleUploadCard">关闭</button>
-<!--    <button class="btn-primary" @click="uploadFiles">上传</button>-->
+    <div class="btn-box">
+      <button class="btn-secondary" @click="toggleUploadCard">关闭</button>
+      <button class="btn-primary" @click="uploadFiles">上传</button>
+    </div>
   </div>
 </template>
 
@@ -161,6 +163,12 @@ export default {
   }
 }
 
+.btn-box {
+  display: flex;
+  gap: 30px; /* 设置按钮之间的间距为10px */
+  justify-content: center;
+}
+
 .btn-secondary {
   padding: .5rem 1rem;
   font-weight: 500;
@@ -188,7 +196,8 @@ export default {
 }
 
 .btn-primary:hover {
-  background-color: dodgerblue;
+  background-color: transparent;
+  border-color: dodgerblue;
   cursor: pointer;
 }
 
