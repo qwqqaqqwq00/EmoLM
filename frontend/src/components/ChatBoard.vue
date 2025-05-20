@@ -16,7 +16,20 @@ export default {
   mounted() {
     this.fetchChatHistoryTitles();
   },
+  watch: {
+    '$route.query.hid': {
+      immediate: true,
+      handler(newHid) {
+        if (newHid) {
+          this.fetchChatHistoryTitles();
+        }
+      }
+    }
+  },
   methods: {
+    changeHistory(hid) {
+      this.$router.push({ path: '/chat', query: { hid } });
+    },
     fetchChatHistoryTitles() {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -50,7 +63,7 @@ export default {
     <div class="nav-list">
       <ul v-for="title in chatHistoryTitles" :key="title.hid" class="nav">
         <li>
-          <a href="/chat">
+          <a class="nav-item" @click="changeHistory(title.hid)">
             <div>{{ title.title }}</div>
           </a>
         </li>
@@ -121,5 +134,9 @@ body {
 
 .nav-list .nav a i{
   margin-right: 16px;
+}
+
+.nav-item {
+  cursor: pointer;
 }
 </style>

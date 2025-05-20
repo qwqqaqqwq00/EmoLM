@@ -78,6 +78,16 @@ export default {
   mounted() {
     this.initMessage();
   },
+  watch: {
+    '$route.query.hid': {
+      immediate: true,
+      handler(newHid) {
+        if (newHid) {
+          this.initMessage();
+        }
+      }
+    }
+  },
   methods: {
     initMessage() {
       const token = localStorage.getItem('token');
@@ -139,7 +149,8 @@ export default {
       const messagePayload = new URLSearchParams({
         message: this.newMessage,
         files: this.stagedFiles.length > 0 ? this.stagedFiles.map(file => file.name) : [],
-        token: token // 添加 token 参数
+        token: token, // 添加 token 参数
+        hid: this.$route.query.hid || 0
       });
 
       this.$axios.post('/api/chat/generate', messagePayload, {

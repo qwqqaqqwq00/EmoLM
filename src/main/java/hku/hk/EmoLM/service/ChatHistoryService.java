@@ -19,6 +19,22 @@ public class ChatHistoryService {
         return chatHistoryDao.getChatHistory(hid, uid);
     }
 
+    /**
+     * 创建新的聊天历史记录
+     */
+    public int createChatHistory(int uid) {
+        // 初始化一个新的聊天历史记录
+        ChatHistoryEntity chatHistory = new ChatHistoryEntity();
+        int hid = chatHistoryDao.getLastHid(uid);
+        chatHistory.setHid(hid + 1);
+        chatHistory.setTimestamp(new Date());
+        chatHistory.setUid(uid);
+        chatHistory.setMessage("Hello, what can I help you?");
+        chatHistory.setRole("assistant");
+        chatHistoryDao.addMessage(chatHistory);
+        return chatHistory.getHid();
+    }
+
     public void addMessage(int hid, String message, String role, int uid) { // 修改方法签名，增加 uid 参数
         ChatHistoryEntity chatHistory = new ChatHistoryEntity();
         chatHistory.setHid(hid);

@@ -1,6 +1,6 @@
 <template>
   <header class="chat-header">
-    <a href="/chat" class="chat-link">EmoLM</a>
+    <a class="chat-link" @click="createNewChatHistory">EmoLM</a>
     <div class="config-menu">
       <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <circle cx="12" cy="12" r="3"/>
@@ -56,6 +56,31 @@ export default {
             alert(error.response?.data?.error || "退出登录失败，请重试！");
           });
     },
+    createNewChatHistory() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error("User token not found in localStorage");
+        return;
+      }
+
+      // 假设我们有一个 API 来创建新的聊天历史记录
+      this.$axios.post('/api/chat/create', new URLSearchParams({token}), {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+        .then(response => {
+          if (response.data && response.data.hid) {
+            // 跳转到新的聊天页面
+            this.$router.push({ path: '/chat', query: { hid: response.data.hid } });
+          } else {
+            console.error("Failed to create new chat history");
+          }
+        })
+        .catch(error => {
+          console.error("Failed to create new chat history:", error);
+        });
+    }
   },
 };
 </script>
@@ -78,6 +103,7 @@ export default {
   text-decoration: none;
   color: #CFD8DC;
   font-size: 16px;
+  cursor: pointer;
 }
 
 .chat-link:hover {

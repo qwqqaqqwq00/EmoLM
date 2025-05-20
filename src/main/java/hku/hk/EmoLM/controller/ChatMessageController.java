@@ -62,13 +62,38 @@ public class ChatMessageController {
     }
 
     /**
+     * 创建新的聊天历史记录
+     */
+    @PostMapping("/create")
+    public ResponseEntity<?> createChatHistory(@RequestParam String token) {
+        ResponseEntity<?> uidResponse = authController.getUidFromToken(token);
+        if (uidResponse.getStatusCode().is2xxSuccessful()) {
+            Map<String, Object> body = (Map<String, Object>) uidResponse.getBody();
+            if (body == null || !body.containsKey("uid")) {
+                return ResponseEntity.badRequest().body(Map.of("error", "无效的 token"));
+            }
+            int uid = (int) body.get("uid");
+
+            // 创建新的聊天历史记录
+            int hid = chatHistoryService.createChatHistory(uid);
+            chatHistoryTitleService.addChatHistoryTitle(hid, uid);
+
+            // 返回生成的 hid
+            return ResponseEntity.ok(Map.of("hid", hid));
+        } else {
+            return ResponseEntity.badRequest().body(Map.of("error", "无效的 token"));
+        }
+    }
+
+    /**
      * 发送消息并生成回复
      */
     @PostMapping("/generate")
     public ResponseEntity<?> generateMessage(
             @RequestParam String message,
             @RequestParam(required = false) List<String> files,
-            @RequestParam String token) {
+            @RequestParam String token,
+            @RequestParam(required = false) int hid) {
         try {
             ResponseEntity<?> uidResponse = authController.getUidFromToken(token);
             if (uidResponse.getStatusCode().is2xxSuccessful()) {
@@ -85,7 +110,9 @@ public class ChatMessageController {
                 );
 
                 // 将消息添加到聊天历史中
-                int hid = 1; // 假设固定为 hid=1
+                if(hid == 0) {
+                    return ResponseEntity.badRequest().body(Map.of("error", "无效的 hid"));
+                }
                 chatHistoryService.addMessage(hid, message, "human", uid);
                 chatHistoryService.addMessage(hid, response.get("message").toString(), "assistant", uid);
 

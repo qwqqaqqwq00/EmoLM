@@ -16,4 +16,9 @@ public class ChatHistoryTitleService {
     public List<ChatHistoryTitleEntity> getChatHistoryTitles(int uid) {
         return chatHistoryTitleDao.getChatHistoryTitles(uid);
     }
+
+    public void addChatHistoryTitle(int hid, int uid) {
+        ChatHistoryTitleEntity chatHistoryTitle = new ChatHistoryTitleEntity(hid, uid, "New Chat");
+        chatHistoryTitleDao.addChatHistoryTitle(chatHistoryTitle);
+    }
 }
