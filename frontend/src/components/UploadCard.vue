@@ -8,6 +8,7 @@ export default {
       uploadUrl: "/api/files/upload",
       uploadHeaders: {
         Authorization: "Bearer " + localStorage.getItem("token"),
+        "Content-Type": "multipart/form-data",
       },
     }
   },

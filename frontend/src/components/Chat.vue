@@ -148,6 +148,8 @@ export default {
         hid: this.$route.query.hid || 0
       });
 
+      this.stagedFiles  = [];
+
       this.$axios.post('/api/chat/generate', messagePayload, {
         headers: {
           Authorization: `Bearer ${token}` // 确保使用 Bearer 格式传递 token
@@ -177,6 +179,9 @@ export default {
     },
     updateFileList(newFileList) {
       this.fileList = newFileList;
+    },
+    stageFile() {
+      this.stagedFiles = [...this.fileList];
     },
     formatTimestamp(date) {
       return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
