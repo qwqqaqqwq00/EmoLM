@@ -28,6 +28,10 @@ https://codepen.io/creativeocean/pen/qEWOgjR
 
 #### Chat message box scroller(removed triangle, consistent the capsule scroller)
 
+#### Chat message scroll to bottom at beginning
+
+#### Chat message wrapper: message control in box
+
 ### Uploader
 
 #### Upload button/user menu/config menu with icon
@@ -43,6 +47,10 @@ https://codepen.io/creativeocean/pen/qEWOgjR
 #### Chat message sending animation
 
 #### Chat message sending time visualization
+
+### Authentication
+
+#### Router guard: redirect to login page if not logged in
 
 ## Backend
 
@@ -64,6 +72,8 @@ To prevent rainbow table attack...
 
 use COUNT(*) to avoid SQL injection
 
+use typing check to avoid SQL injection
+
 ### FileController interact with FileService
 
 #### File cleanup service
@@ -71,6 +81,8 @@ use COUNT(*) to avoid SQL injection
 ### JWT token
 
 #### JWT encode information: uid
+
+#### token placement: header authentication
 
 ### ChatMessageController
 

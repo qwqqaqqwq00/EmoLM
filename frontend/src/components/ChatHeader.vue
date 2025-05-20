@@ -49,6 +49,7 @@ export default {
     logout() {
       this.$axios.get("/api/logout")
           .then(() => {
+            localStorage.removeItem('token');
             alert("已成功退出登录");
             this.$router.push("/");
           })
@@ -64,7 +65,7 @@ export default {
       }
 
       // 假设我们有一个 API 来创建新的聊天历史记录
-      this.$axios.post('/api/chat/create', new URLSearchParams({token}), {
+      this.$axios.post('/api/chat/create', new URLSearchParams({}), {
         headers: {
           Authorization: `Bearer ${token}`
         }

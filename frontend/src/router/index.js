@@ -48,13 +48,18 @@ const router = createRouter({
     routes,
 });
 
-// routes.beforeEach((to, from, next) => {
-//     const token = localStorage.getItem('token');
-//     if(to.path !== '/login' && this.$axios.post('api/isAuthenticated', new URLSearchParams({'token': token})) === true){
-//         next('/login');
-//     } else {
-//         next();
-//     }
-// });
+// 添加全局导航守卫
+router.beforeEach((to, from, next) => {
+    const token = localStorage.getItem('token');
+    const isAuthenticated = !!token; // 判断用户是否已登录
+    const isPublicPage = ['/login', '/'].includes(to.path); // 公开页面无需登录
+
+    if (!isAuthenticated && !isPublicPage) {
+        // 如果用户未登录且访问非公开页面，则重定向到登录页面
+        next('/login');
+    } else {
+        next(); // 否则继续导航
+    }
+});
 
 export default router;

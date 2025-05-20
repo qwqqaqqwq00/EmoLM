@@ -26,7 +26,12 @@ public class ChatMessageController {
     private AuthController authController;
 
     @PostMapping("/history/titles")
-    public ResponseEntity<?> getChatHistoryTitles(@RequestParam String token) {
+    public ResponseEntity<?> getChatHistoryTitles(@RequestHeader("Authorization") String token) {
+        if(token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        } else {
+            return ResponseEntity.badRequest().body(Map.of("error", "无效的 token 格式"));
+        }
         ResponseEntity<?> uidResponse = authController.getUidFromToken(token);
         if (uidResponse.getStatusCode().is2xxSuccessful()) {
             int uid = (int) ((Map<String, Object>) Objects.requireNonNull(uidResponse.getBody())).get("uid");
@@ -41,16 +46,22 @@ public class ChatMessageController {
      * 获取聊天历史记录
      */
     @PostMapping("/history")
-    public ResponseEntity<?> getChatHistory(@RequestParam int hid, @RequestParam String token) {
+    public ResponseEntity<?> getChatHistory(@RequestParam int hid, @RequestHeader("Authorization") String token) {
         // 通过 token 获取 uid
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7); // 移除 "Bearer " 前缀
+        } else {
+            return ResponseEntity.badRequest().body(Map.of("error", "无效的 token 格式"));
+        }
+
         ResponseEntity<?> uidResponse = authController.getUidFromToken(token);
         if (uidResponse.getStatusCode().is2xxSuccessful()) {
             Map<String, Object> body = (Map<String, Object>) uidResponse.getBody();
-            if(body == null || !body.containsKey("uid")){
+            if (body == null || !body.containsKey("uid")) {
                 return ResponseEntity.badRequest().body(Map.of("error", body.toString()));
             }
             int uid = (int) body.get("uid");
-            if (hid == 0) {
+            if(hid == 0) {
                 hid = chatHistoryService.getLastHid(uid);
             }
             List<ChatHistoryEntity> messages = chatHistoryService.getChatHistory(hid, uid);
@@ -68,7 +79,12 @@ public class ChatMessageController {
      * 创建新的聊天历史记录
      */
     @PostMapping("/create")
-    public ResponseEntity<?> createChatHistory(@RequestParam String token) {
+    public ResponseEntity<?> createChatHistory(@RequestHeader("Authorization") String token) {
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7); // 移除 "Bearer " 前缀
+        } else {
+            return ResponseEntity.badRequest().body(Map.of("error", "无效的 token 格式"));
+        }
         ResponseEntity<?> uidResponse = authController.getUidFromToken(token);
         if (uidResponse.getStatusCode().is2xxSuccessful()) {
             Map<String, Object> body = (Map<String, Object>) uidResponse.getBody();
@@ -95,9 +111,16 @@ public class ChatMessageController {
     public ResponseEntity<?> generateMessage(
             @RequestParam String message,
             @RequestParam(required = false) List<String> files,
-            @RequestParam String token,
-            @RequestParam(required = false) int hid) {
+            @RequestParam(required = false) int hid,
+            @RequestHeader("Authorization") String token) {
         try {
+            System.out.println(token);
+            if (token != null && token.startsWith("Bearer ")) {
+                token = token.substring(7);
+            } else {
+                return ResponseEntity.badRequest().body(Map.of("error", "无效的 token 格式"));
+            }
+
             ResponseEntity<?> uidResponse = authController.getUidFromToken(token);
             if (uidResponse.getStatusCode().is2xxSuccessful()) {
                 Map<String, Object> body = (Map<String, Object>) uidResponse.getBody();
@@ -105,17 +128,14 @@ public class ChatMessageController {
                     return ResponseEntity.badRequest().body(Map.of("error", "无效的 token"));
                 }
                 int uid = (int) body.get("uid");
-
-                // 模拟生成回复
+                if (hid == 0) {
+                    return ResponseEntity.badRequest().body(Map.of("error", "无效的 hid"));
+                }
                 Map<String, Object> response = Map.of(
                         "message", "This is a generated response to: " + message,
                         "files", files != null ? files : List.of()
                 );
 
-                // 将消息添加到聊天历史中
-                if(hid == 0) {
-                    return ResponseEntity.badRequest().body(Map.of("error", "无效的 hid"));
-                }
                 chatHistoryService.addMessage(hid, message, "human", uid);
                 chatHistoryService.addMessage(hid, response.get("message").toString(), "assistant", uid);
 

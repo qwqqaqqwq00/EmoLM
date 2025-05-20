@@ -90,89 +90,89 @@ export default {
   },
   methods: {
     initMessage() {
-      const token = localStorage.getItem('token');
-      const hid = this.$route.query.hid || 0; // 默认 hid=1
+        const token = localStorage.getItem('token');
+        const hid = this.$route.query.hid || 0; // 默认 hid=1
 
-      if (!token) {
-        console.error("User token not found in localStorage");
-        return;
-      }
-
-      this.$axios.post('/api/chat/history', new URLSearchParams({hid, token}), {
-        headers: {
-          Authorization: `Bearer ${token}` // 确保使用 Bearer 格式传递 token
+        if (!token) {
+            console.error("User token not found in localStorage");
+            return;
         }
-      })
-          .then(response => {
-            if (response.data && Array.isArray(response.data)) {
-              this.messages = response.data.map(item => ({
-                id: item.id,
-                value: item.message,
-                role: item.role,
-                timestamp: new Date(item.timestamp),
-                isNew: false,
-                files: item.files || []
-              }));
-            } else {
-              console.error("Unexpected response format from /api/chat/history");
+
+        this.$axios.post('/api/chat/history', new URLSearchParams({ hid }), {
+            headers: {
+                Authorization: `Bearer ${token}` // 将 token 放在请求头中
             }
-          })
-          .catch(error => {
-            console.error("无法获取历史记录:", error);
-          });
+        })
+            .then(response => {
+                if (response.data && Array.isArray(response.data)) {
+                    this.messages = response.data.map(item => ({
+                        id: item.id,
+                        value: item.message,
+                        role: item.role,
+                        timestamp: new Date(item.timestamp),
+                        isNew: false,
+                        files: item.files || []
+                    }));
+                    this.$nextTick(this.scrollToBottom);
+                } else {
+                    console.error("Unexpected response format from /api/chat/history");
+                }
+            })
+            .catch(error => {
+                console.error("无法获取历史记录:", error);
+            });
     },
 
     sendMessage() {
-      if (this.newMessage.trim() === '') return;
+        if (this.newMessage.trim() === '') return;
 
-      const token = localStorage.getItem('token');
-      if (!token) {
-        console.error("User token not found in localStorage");
-        return;
-      }
-
-      const userMessage = {
-        id: this.messages.length + 1,
-        value: this.newMessage,
-        role: 'human',
-        timestamp: new Date(),
-        isNew: true,
-        files: this.stagedFiles.length > 0 ? this.stagedFiles.map(file => file.name) : []
-      };
-      this.messages.push(userMessage);
-
-      const messagePayload = new URLSearchParams({
-        message: this.newMessage,
-        files: this.stagedFiles.length > 0 ? this.stagedFiles.map(file => file.name) : [],
-        token: token, // 添加 token 参数
-        hid: this.$route.query.hid || 0
-      });
-
-      this.stagedFiles  = [];
-
-      this.$axios.post('/api/chat/generate', messagePayload, {
-        headers: {
-          Authorization: `Bearer ${token}` // 确保使用 Bearer 格式传递 token
+        const token = localStorage.getItem('token');
+        if (!token) {
+            console.error("User token not found in localStorage");
+            return;
         }
-      })
-          .then(response => {
-            const newMessage = {
-              id: this.messages.length + 1,
-              value: response.data.message || "No response from server",
-              role: 'assistant',
-              timestamp: new Date(),
-              isNew: true,
-              files: response.data.files || []
-            };
-            this.messages.push(newMessage);
-            this.newMessage = '';
-            this.stagedFiles = [];
-            this.scrollToBottom();
-          })
-          .catch(error => {
-            console.error("Failed to send message:", error);
-            alert("Failed to send message. Please try again later.");
-          });
+
+        const userMessage = {
+            id: this.messages.length + 1,
+            value: this.newMessage,
+            role: 'human',
+            timestamp: new Date(),
+            isNew: true,
+            files: this.stagedFiles.length > 0 ? this.stagedFiles.map(file => file.name) : []
+        };
+        this.messages.push(userMessage);
+
+        const messagePayload = new URLSearchParams({
+            message: this.newMessage,
+            files: this.stagedFiles.length > 0 ? this.stagedFiles.map(file => file.name) : [],
+            hid: this.$route.query.hid || 0
+        });
+
+        this.stagedFiles = [];
+
+        this.$axios.post('/api/chat/generate', messagePayload, {
+            headers: {
+                Authorization: `Bearer ${token}` // 将 token 放在请求头中
+            }
+        })
+            .then(response => {
+                const newMessage = {
+                    id: this.messages.length + 1,
+                    value: response.data.message || "No response from server",
+                    role: 'assistant',
+                    timestamp: new Date(),
+                    isNew: true,
+                    files: response.data.files || []
+                };
+                this.messages.push(newMessage);
+                this.newMessage = '';
+                this.stagedFiles = [];
+                this.scrollToBottom();
+            })
+            .catch(error => {
+                console.error("Failed to send message:", error);
+                alert("Failed to send message. Please try again later.");
+            });
     },
     toggleUploadCard() {
       this.showUploadCard = !this.showUploadCard;
@@ -222,7 +222,7 @@ export default {
 
 /* Messages content: Base bubble styles */
 .messages-content {
-  max-width: 100%;
+  max-width: 100%; /* 限制消息框的最大宽度 */
   margin: 8px 0 8px 40px;
   padding: 6px 10px 7px;
   border-radius: 10px 10px 10px 0;
@@ -233,6 +233,9 @@ export default {
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
   color: rgba(255, 255, 255, 0.9);
   align-self: flex-start; /* Default: left for assistant */
+  word-break: break-all;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
 }
 
 /* Timestamp */

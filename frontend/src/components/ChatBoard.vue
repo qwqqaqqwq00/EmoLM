@@ -37,7 +37,7 @@ export default {
         return;
       }
 
-      this.$axios.post('/api/chat/history/titles', new URLSearchParams({token}), {
+      this.$axios.post('/api/chat/history/titles', new URLSearchParams({}), {
         headers: {
           Authorization: `Bearer ${token}`
         }
