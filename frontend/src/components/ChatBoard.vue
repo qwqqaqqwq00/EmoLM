@@ -1,16 +1,45 @@
 <script>
 import Chat from '@/components/Chat.vue'
 import ChatHeader from "@/components/ChatHeader.vue";
+
 export default {
   name: "ChatDashboard",
   components: {ChatHeader, Chat},
   data() {
     return {
-      chatHistoryTitle: [
-        "A normal chat example.",
-        "A normal chat example.",
+      chatHistoryTitles: [
+        {title: "A normal chat example.", hid: 1, uid: 1},
+        {title: "A normal chat example.", hid: 2, uid: 1},
       ],
     };
+  },
+  mounted() {
+    this.fetchChatHistoryTitles();
+  },
+  methods: {
+    fetchChatHistoryTitles() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error("User token not found in localStorage");
+        return;
+      }
+
+      this.$axios.post('/api/chat/history/titles', new URLSearchParams({token}), {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+        .then(response => {
+          if (response.data && Array.isArray(response.data)) {
+            this.chatHistoryTitles = response.data;
+          } else {
+            console.error("Unexpected response format from /api/chat/history/titles");
+          }
+        })
+        .catch(error => {
+          console.error("Failed to fetch chat history titles:", error);
+        });
+    }
   }
 };
 </script>
@@ -19,10 +48,10 @@ export default {
   <ChatHeader/>
   <div class="chat-board">
     <div class="nav-list">
-      <ul v-for="chatTitle in chatHistoryTitle" :key="chatTitle" class="nav">
+      <ul v-for="title in chatHistoryTitles" :key="title.hid" class="nav">
         <li>
           <a href="/chat">
-            <div>{{ chatTitle }}</div>
+            <div>{{ title.title }}</div>
           </a>
         </li>
       </ul>

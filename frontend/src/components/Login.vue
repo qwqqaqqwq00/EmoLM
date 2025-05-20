@@ -29,7 +29,6 @@ import CodeDriveAnimTitle from "@/components/CodeDriveAnimTitle.vue";
 export default {
   name: "UserLogin",
   components: {CodeDriveAnimTitle},
- // 修改为多单词名称
   data() {
     return {
       username: "",
@@ -38,17 +37,24 @@ export default {
     };
   },
   methods: {
-    handleLogin() {
-      // 调用后端 API 进行登录
-      this.$axios.post("/api/login", new URLSearchParams({
-        username: this.username,
-        password: this.password,
-      })).then(() => { // 移除未使用的 response
-        alert("登录成功");
-        this.$router.push("/dashboard");
-      }).catch(error => {
-        alert(error.response.data.error || "登录失败");
-      });
+    async handleLogin() {
+        try {
+            const response = await this.$axios.post('/api/login', new URLSearchParams({
+                username: this.username,
+                password: this.password
+            }));
+            if (response.data.success) {
+                // 将 token 存储到 localStorage
+                localStorage.setItem('token', response.data.token);
+                alert("登录成功！");
+                this.$router.push('/dashboard');
+            } else {
+                alert(response.data.error || "登录失败，请重试！");
+            }
+        } catch (error) {
+            console.error("登录失败:", error);
+            alert("登录失败，请检查网络或稍后再试！");
+        }
     },
     gotoReg() {
       this.$router.push("/register");
@@ -58,7 +64,6 @@ export default {
 </script>
 
 <style scoped>
-
 .login-box {
   position: absolute;
   top: 50%;
@@ -119,5 +124,4 @@ export default {
   margin-top: 40px;
   letter-spacing: 4px
 }
-
 </style>

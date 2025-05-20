@@ -33,4 +33,17 @@ public class UserDao {
         String query = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
         return jdbcTemplate.update(query, username, password, email) > 0;
     }
+
+    public Object getUserIdByUsername(String username, String password) {
+        String  query = "SELECT id FROM users WHERE username = ? AND password = ?";
+        try {
+            return jdbcTemplate.queryForObject(query,
+                    new Object[]{username, password},
+                    new int[]{Types.VARCHAR, Types.VARCHAR},
+                    Integer.class);
+        } catch (Exception e) {
+            // 如果查询失败（如用户不存在或密码错误），返回null
+            return null;
+        }
+    }
 }

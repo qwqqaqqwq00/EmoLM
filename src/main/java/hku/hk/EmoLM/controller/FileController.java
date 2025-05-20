@@ -23,7 +23,6 @@ public class FileController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("success", false, "error", e.getMessage()));
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(500).body(Map.of("success", false, "error", "文件上传失败，请重试！"));
         }
     }

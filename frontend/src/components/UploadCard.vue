@@ -14,6 +14,8 @@ export default {
   methods: {
     toggleUploadCard() {
       this.showUploadCard = !this.showUploadCard;
+      this.fileList = [];
+      this.$emit('update-file-list', this.fileList);
     },
     handleBeforeUpload(file) {
       this.fileList.push(file); // 暂存文件
@@ -35,19 +37,14 @@ export default {
       });
 
       Promise.all(uploadPromises)
-        .then(responses => {
-          responses.forEach((response, index) => {
-            this.messages.push({
-              id: this.messages.length + 1,
-              text: `文件已上传: ${this.fileList[index].name}`,
-              isMine: true,
-            });
-          });
+        .then(() => {
+          this.$emit('staging-files');
           alert("所有文件上传成功！");
           this.fileList = []; // 清空文件列表
           this.toggleUploadCard();
         })
-        .catch(() => {
+        .catch((e) => {
+          alert(e);
           alert("部分文件上传失败，请重试！");
         });
     },
@@ -121,7 +118,7 @@ export default {
   border: 1px solid rgba(255, 255, 255, 0.1); /* 调整边框颜色 */
 }
 
-/deep/ .el-upload-dragger {
+:deep .el-upload-dragger {
   background-color: #2e2e2e !important;
   border-color: #555 !important;
   color: #ccc !important;

@@ -1,0 +1,9 @@
+DROP TABLE IF EXISTS chat_history;
+CREATE TABLE chat_history (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      uid INT NOT NULL,
+      hid INT NOT NULL,
+      message TEXT NOT NULL,
+      role VARCHAR(50) NOT NULL,
+      timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP -- 修改: 将 BIGINT 改为 TIMESTAMP，并设置默认值为 CURRENT_TIMESTAMP
+);

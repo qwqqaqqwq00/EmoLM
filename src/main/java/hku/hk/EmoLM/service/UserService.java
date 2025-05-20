@@ -20,4 +20,8 @@ public class UserService {
     public boolean registerUser(String username, String password, String email) {
         return userDao.registerUser(username, password, email);
     }
+
+    public Object getUserIdByUsername(String username, String password) {
+        return userDao.getUserIdByUsername(username, password);
+    }
 }

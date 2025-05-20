@@ -6,8 +6,8 @@
            :key="msg.id"
            :class="{ 'message-personal': msg.role === 'human', 'message': msg.role !== 'human', 'new': msg.isNew }"
       >
-        <div class="avatar" v-if="msg.avatar">
-          <img :src="msg.avatar" alt="Avatar" />
+        <div class="avatar" v-if="msg.role === 'assistant'">
+          <img :src="require('@/assets/robot.jpg')" alt="Avatar" />
         </div>
         <span>{{ msg.value }}</span>
         <div class="timestamp">{{ formatTimestamp(msg.timestamp) }}</div>
@@ -22,6 +22,14 @@
             </svg>
             <span class="file-name">{{ file.name }}</span>
           </div>
+        </div>
+      </div>
+      <div class="staged-file-list-container" v-if="stagedFiles.length">
+        <div v-for="file in stagedFiles" :key="file.name" class="file-card staged">
+          <svg class="file-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zM13 3.5L18.5 9H14V3.5zM6 20V4h6v5h5v11H6z"/>
+          </svg>
+          <span class="file-name">{{ file.name }}</span>
         </div>
       </div>
       <div class="chat-input-container">
@@ -42,12 +50,13 @@
         </i>
       </div>
     </form>
-    <UploadCard v-if="showUploadCard" @close="toggleUploadCard" @update-file-list="updateFileList"/>
+    <UploadCard v-if="showUploadCard" @close="toggleUploadCard" @update-file-list="updateFileList" @staging-files="stageFile"/>
   </div>
 </template>
 
 <script>
 import UploadCard from "@/components/UploadCard.vue";
+
 export default {
   name: 'VueChatApp',
   components: {
@@ -56,37 +65,106 @@ export default {
   data() {
     return {
       messages: [
-        { id: 1, value: 'Are we meeting today?', role: 'assistant', timestamp: new Date(), avatar: require('@/assets/robot.jpg'), isNew: false },
-        { id: 2, value: 'Yes, what time suits you?', role: 'human', timestamp: new Date(), avatar: null, isNew: false },
-        { id: 3, value: 'I was thinking after lunch, I have a meeting in the morning.', role: 'assistant', timestamp: new Date(), avatar: require('@/assets/robot.jpg'), isNew: true },
+        { id: 1, value: 'Are we meeting today?', role: 'assistant', timestamp: new Date(), isNew: false, files: [] },
+        { id: 2, value: 'Yes, what time suits you?', role: 'human', timestamp: new Date(), isNew: false, files: [] },
+        { id: 3, value: 'I was thinking after lunch, I have a meeting in the morning.', role: 'assistant', timestamp: new Date(), isNew: true, files: [] },
       ],
       newMessage: '',
       showUploadCard: false,
       fileList: [],
+      stagedFiles: [],
     };
   },
   mounted() {
-    this.$nextTick(() => {
-      this.scrollToBottom();
-    });
+    this.initMessage();
   },
   methods: {
+    initMessage() {
+      const token = localStorage.getItem('token');
+      const hid = this.$route.query.hid || 1; // 默认 hid=1
+
+      if (!token) {
+        console.error("User token not found in localStorage");
+        return;
+      }
+
+      if (!hid) {
+        console.error("Chat history ID (hid) not found in route query");
+        return;
+      }
+
+      this.$axios.post('/api/chat/history', new URLSearchParams({hid, token}), {
+        headers: {
+          Authorization: `Bearer ${token}` // 确保使用 Bearer 格式传递 token
+        }
+      })
+          .then(response => {
+            if (response.data && Array.isArray(response.data)) {
+              this.messages = response.data.map(item => ({
+                id: item.id,
+                value: item.message,
+                role: item.role,
+                timestamp: new Date(item.timestamp),
+                isNew: false,
+                files: item.files || []
+              }));
+            } else {
+              console.error("Unexpected response format from /api/chat/history");
+            }
+          })
+          .catch(error => {
+            console.error("无法获取历史记录:", error);
+          });
+    },
+
     sendMessage() {
       if (this.newMessage.trim() === '') return;
-      this.messages.push({
+
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error("User token not found in localStorage");
+        return;
+      }
+
+      const userMessage = {
         id: this.messages.length + 1,
         value: this.newMessage,
         role: 'human',
         timestamp: new Date(),
-        avatar: null,
         isNew: true,
+        files: this.stagedFiles.length > 0 ? this.stagedFiles.map(file => file.name) : []
+      };
+      this.messages.push(userMessage);
+
+      const messagePayload = new URLSearchParams({
+        message: this.newMessage,
+        files: this.stagedFiles.length > 0 ? this.stagedFiles.map(file => file.name) : [],
+        token: token // 添加 token 参数
       });
-      this.newMessage = '';
-      this.$nextTick(() => {
-        const chatThread = document.querySelector('.chat-thread');
-        chatThread.scrollTop = chatThread.scrollHeight;
-        this.scrollToBottom();
-      });
+
+      this.$axios.post('/api/chat/generate', messagePayload, {
+        headers: {
+          Authorization: `Bearer ${token}` // 确保使用 Bearer 格式传递 token
+        }
+      })
+          .then(response => {
+            const newMessage = {
+              id: this.messages.length + 1,
+              value: response.data.message || "No response from server",
+              role: 'assistant',
+              timestamp: new Date(),
+              isNew: true,
+              files: response.data.files || []
+            };
+            this.messages.push(newMessage);
+            this.newMessage = '';
+            this.stagedFiles = [];
+            this.scrollToBottom();
+          })
+          .catch(error => {
+            console.error("Failed to send message:", error);
+            alert("Failed to send message. Please try again later.");
+          });
     },
     toggleUploadCard() {
       this.showUploadCard = !this.showUploadCard;
@@ -105,6 +183,7 @@ export default {
     },
   },
 };
+
 </script>
 
 <style>
@@ -338,6 +417,11 @@ export default {
   font-size: 14px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   margin: 5px 0;
+}
+
+.staged-file-list-container .file-card.staged {
+  background: #253237;
+  border: 1px dashed #03a9f4;
 }
 
 .file-icon {

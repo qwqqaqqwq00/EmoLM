@@ -8,11 +8,21 @@ import org.springframework.web.bind.annotation.*;
 import hku.hk.EmoLM.service.UserService;
 import hku.hk.EmoLM.service.EmailService;
 
+import java.util.Arrays;
 import java.util.Map;
 
-@RestController // 使用 @RestController 代替 @Controller，自动将返回值转换为 JSON
-@RequestMapping("/api") // 为所有接口添加统一的前缀
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import java.util.Date;
+
+@RestController
+@RequestMapping("/api")
 public class AuthController {
+
+    // 修改: 使用 Keys.secretKeyFor 生成安全的密钥
+    private static final String SECRET_KEY = "[-70, -71, 9, 111, -75, 124, 109, 54, 63, -118, 31, -92, 19, 95, -9, 65, 18, 92, 59, -110, 47, -120, 43, 114, 104, 117, 68, -107, -13, -81, -113, 83, -102, -12, 85, 44, 30, -10, -100, -43, 54, 77, -93, -108, -102, -34, 52, 43, -54, 19, -78, 55, -114, 44, -16, -17, 105, -54, -69, 111, 19, -45, -107, 4]"; // 替换为实际的密钥
 
     @Autowired
     private UserService userService;
@@ -23,10 +33,39 @@ public class AuthController {
     @Autowired
     private PasswordService passwordService;
 
+    @PostMapping("/getuid")
+    public ResponseEntity<?> getUidFromToken(@RequestParam String token) {
+        try {
+            Claims claims = Jwts.parserBuilder()
+                .setSigningKey(SECRET_KEY.getBytes())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+            if (claims.get("uid") == null) {
+                return ResponseEntity.badRequest().body(Map.of("success", false, "error", "JWT 中未包含 uid 声明"));
+            }
+
+            int uid = (Integer) claims.get("uid");
+            return ResponseEntity.ok().body(Map.of("success", true, "uid", uid));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "error", "无效的 token"));
+        }
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> handleLogin(@RequestParam String username, @RequestParam String password) {
-        if (userService.authenticateUser(username, passwordService.encryptPassword(password))) {
-            return ResponseEntity.ok().body(Map.of("success", true, "message", "登录成功"));
+        String encryptedPassword = passwordService.encryptPassword(password);
+        if (userService.authenticateUser(username, encryptedPassword)) {
+            // 生成 JWT token
+            String token = Jwts.builder()
+                    .setSubject(username)
+                    .claim("uid", userService.getUserIdByUsername(username, encryptedPassword)) // 假设有一个方法获取用户ID
+                    .setIssuedAt(new Date())
+                    .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 24小时过期
+                    .signWith(Keys.hmacShaKeyFor(SECRET_KEY.getBytes()), SignatureAlgorithm.HS512) // 修改: 使用 Keys.hmacShaKeyFor
+                    .compact();
+            return ResponseEntity.ok().body(Map.of("success", true, "message", "登录成功", "token", token));
         }
         return ResponseEntity.badRequest().body(Map.of("success", false, "error", "用户名或密码错误，请重试！"));
     }
