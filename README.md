@@ -68,6 +68,18 @@ use COUNT(*) to avoid SQL injection
 
 #### File cleanup service
 
+### JWT token
+
+#### JWT encode information: uid
+
+### ChatMessageController
+
+#### History retrieval by uid
+
+#### Chat Messages retrieval by uid, hid, sorted by inner id
+
+#### Chat Messages send with files attachment
+
 # Demo
 
 ## Images
@@ -79,4 +91,6 @@ use COUNT(*) to avoid SQL injection
 ![dashboard.png](frontend/public/dashboard.png)
 
 ![chat.png](frontend/public/chat.png)
+
+![file_upload.png](frontend/public/file_upload.png)
 

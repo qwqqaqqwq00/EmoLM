@@ -50,6 +50,9 @@ public class ChatMessageController {
                 return ResponseEntity.badRequest().body(Map.of("error", body.toString()));
             }
             int uid = (int) body.get("uid");
+            if (hid == 0) {
+                hid = chatHistoryService.getLastHid(uid);
+            }
             List<ChatHistoryEntity> messages = chatHistoryService.getChatHistory(hid, uid);
             if (messages != null) {
                 return ResponseEntity.ok(messages);

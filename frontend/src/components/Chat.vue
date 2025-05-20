@@ -91,15 +91,10 @@ export default {
   methods: {
     initMessage() {
       const token = localStorage.getItem('token');
-      const hid = this.$route.query.hid || 1; // 默认 hid=1
+      const hid = this.$route.query.hid || 0; // 默认 hid=1
 
       if (!token) {
         console.error("User token not found in localStorage");
-        return;
-      }
-
-      if (!hid) {
-        console.error("Chat history ID (hid) not found in route query");
         return;
       }
 

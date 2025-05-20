@@ -35,6 +35,10 @@ public class ChatHistoryService {
         return chatHistory.getHid();
     }
 
+    public int getLastHid(int uid) {
+        return chatHistoryDao.getLastHid(uid);
+    }
+
     public void addMessage(int hid, String message, String role, int uid) { // 修改方法签名，增加 uid 参数
         ChatHistoryEntity chatHistory = new ChatHistoryEntity();
         chatHistory.setHid(hid);
