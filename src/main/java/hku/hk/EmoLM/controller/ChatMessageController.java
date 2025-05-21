@@ -34,6 +34,7 @@ public class ChatMessageController {
         }
         ResponseEntity<?> uidResponse = authController.getUidFromToken(token);
         if (uidResponse.getStatusCode().is2xxSuccessful()) {
+            @SuppressWarnings("unchecked")
             int uid = (int) ((Map<String, Object>) Objects.requireNonNull(uidResponse.getBody())).get("uid");
             List<ChatHistoryTitleEntity> titles = chatHistoryTitleService.getChatHistoryTitles(uid);
             return ResponseEntity.ok(titles);
@@ -43,20 +44,25 @@ public class ChatMessageController {
     }
 
     /**
-     * 获取聊天历史记录
+     * get chat history
      */
     @PostMapping("/history")
     public ResponseEntity<?> getChatHistory(@RequestParam int hid, @RequestHeader("Authorization") String token) {
-        // 通过 token 获取 uid
+        // get uid from token
         if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7); // 移除 "Bearer " 前缀
+            token = token.substring(7); // remove "Bearer " prefix
         } else {
             return ResponseEntity.badRequest().body(Map.of("error", "Invalid token format"));
         }
 
         ResponseEntity<?> uidResponse = authController.getUidFromToken(token);
         if (uidResponse.getStatusCode().is2xxSuccessful()) {
-            Map<String, Object> body = (Map<String, Object>) uidResponse.getBody();
+            Object responseBody = uidResponse.getBody();
+            if (!(responseBody instanceof Map<?, ?>)) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Invalid response format"));
+            }
+            @SuppressWarnings("unchecked")
+            Map<String, Object> body = (Map<String, Object>) responseBody;
             if (body == null || !body.containsKey("uid")) {
                 return ResponseEntity.badRequest().body(Map.of("error", body.toString()));
             }
@@ -76,28 +82,29 @@ public class ChatMessageController {
     }
 
     /**
-     * 创建新的聊天历史记录
+     * create new chat history
      */
     @PostMapping("/create")
     public ResponseEntity<?> createChatHistory(@RequestHeader("Authorization") String token) {
         if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7); // 移除 "Bearer " 前缀
+            token = token.substring(7); // remove "Bearer " prefix
         } else {
             return ResponseEntity.badRequest().body(Map.of("error", "Invalid token format"));
         }
         ResponseEntity<?> uidResponse = authController.getUidFromToken(token);
         if (uidResponse.getStatusCode().is2xxSuccessful()) {
+            @SuppressWarnings("unchecked")
             Map<String, Object> body = (Map<String, Object>) uidResponse.getBody();
             if (body == null || !body.containsKey("uid")) {
                 return ResponseEntity.badRequest().body(Map.of("error", "Invalid token"));
             }
             int uid = (int) body.get("uid");
 
-            // 创建新的聊天历史记录
+            // create new chat history
             int hid = chatHistoryService.createChatHistory(uid);
             chatHistoryTitleService.addChatHistoryTitle(hid, uid);
 
-            // 返回生成的 hid
+            // return hid
             return ResponseEntity.ok(Map.of("hid", hid));
         } else {
             return ResponseEntity.badRequest().body(Map.of("error", "Invalid token"));
@@ -105,7 +112,7 @@ public class ChatMessageController {
     }
 
     /**
-     * 发送消息并生成回复
+     * send message and generate response
      */
     @PostMapping("/generate")
     public ResponseEntity<?> generateMessage(
@@ -123,6 +130,7 @@ public class ChatMessageController {
 
             ResponseEntity<?> uidResponse = authController.getUidFromToken(token);
             if (uidResponse.getStatusCode().is2xxSuccessful()) {
+                @SuppressWarnings("unchecked")
                 Map<String, Object> body = (Map<String, Object>) uidResponse.getBody();
                 if (body == null || !body.containsKey("uid")) {
                     return ResponseEntity.badRequest().body(Map.of("error", "Invalid token"));

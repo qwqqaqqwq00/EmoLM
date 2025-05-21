@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import hku.hk.EmoLM.service.UserService;
 import hku.hk.EmoLM.service.EmailService;
 
-import java.util.Arrays;
 import java.util.Map;
 
 import io.jsonwebtoken.Claims;
@@ -21,7 +20,6 @@ import java.util.Date;
 @RequestMapping("/api")
 public class AuthController {
 
-    // 修改: 使用 Keys.secretKeyFor 生成安全的密钥
     private static final String SECRET_KEY = "[-70, -71, 9, 111, -75, 124, 109, 54, 63, -118, 31, -92, 19, 95, -9, 65, 18, 92, 59, -110, 47, -120, 43, 114, 104, 117, 68, -107, -13, -81, -113, 83, -102, -12, 85, 44, 30, -10, -100, -43, 54, 77, -93, -108, -102, -34, 52, 43, -54, 19, -78, 55, -114, 44, -16, -17, 105, -54, -69, 111, 19, -45, -107, 4]"; // 替换为实际的密钥
 
     @Autowired
@@ -43,13 +41,13 @@ public class AuthController {
                 .getBody();
 
             if (claims.get("uid") == null) {
-                return ResponseEntity.badRequest().body(Map.of("success", false, "error", "JWT 中未包含 uid 声明"));
+                return ResponseEntity.badRequest().body(Map.of("success", false, "error", "JWT does not contain uid claim"));
             }
 
             int uid = (Integer) claims.get("uid");
             return ResponseEntity.ok().body(Map.of("success", true, "uid", uid));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("success", false, "error", "无效的 token"));
+            return ResponseEntity.badRequest().body(Map.of("success", false, "error", "Invalid token"));
         }
     }
 
@@ -57,17 +55,17 @@ public class AuthController {
     public ResponseEntity<?> handleLogin(@RequestParam String username, @RequestParam String password) {
         String encryptedPassword = passwordService.encryptPassword(password);
         if (userService.authenticateUser(username, encryptedPassword)) {
-            // 生成 JWT token
+            // JWT token
             String token = Jwts.builder()
                     .setSubject(username)
-                    .claim("uid", userService.getUserIdByUsername(username, encryptedPassword)) // 假设有一个方法获取用户ID
+                    .claim("uid", userService.getUserIdByUsername(username, encryptedPassword))
                     .setIssuedAt(new Date())
-                    .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 24小时过期
-                    .signWith(Keys.hmacShaKeyFor(SECRET_KEY.getBytes()), SignatureAlgorithm.HS512) // 修改: 使用 Keys.hmacShaKeyFor
+                    .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 24 hours expiration
+                    .signWith(Keys.hmacShaKeyFor(SECRET_KEY.getBytes()), SignatureAlgorithm.HS512) // Use Keys.hmacShaKeyFor
                     .compact();
-            return ResponseEntity.ok().body(Map.of("success", true, "message", "登录成功", "token", token));
+            return ResponseEntity.ok().body(Map.of("success", true, "message", "Login successful", "token", token));
         }
-        return ResponseEntity.badRequest().body(Map.of("success", false, "error", "用户名或密码错误，请重试！"));
+        return ResponseEntity.badRequest().body(Map.of("success", false, "error", "Invalid username or password, please try again!"));
     }
 
     @PostMapping("/register")
@@ -77,38 +75,38 @@ public class AuthController {
         if (password.equals(confirmPassword)) {
             boolean isValid = emailService.verifyCode(email, verifyCode);
             if (!isValid) {
-                return ResponseEntity.badRequest().body(Map.of("success", false, "error", "验证码错误或已过期！"));
+                return ResponseEntity.badRequest().body(Map.of("success", false, "error", "Invalid verification code or expired!"));
             }
             if (userService.registerUser(username, passwordService.encryptPassword(password), email)) {
-                return ResponseEntity.ok().body(Map.of("success", true, "message", "注册成功，请登录！"));
+                return ResponseEntity.ok().body(Map.of("success", true, "message", "Registration successful, please login!"));
             }
         }
-        return ResponseEntity.badRequest().body(Map.of("success", false, "error", "密码不匹配或注册失败，请重试！"));
+        return ResponseEntity.badRequest().body(Map.of("success", false, "error", "Password mismatch or registration failed, please try again!"));
     }
 
     @PostMapping("/isAuthenticated")
     public ResponseEntity<?> isAuthenticated(@RequestParam String token) {
         if (token != null && !token.isEmpty()) {
-            return ResponseEntity.ok().body(Map.of("success", true, "message", "已登录"));
+            return ResponseEntity.ok().body(Map.of("success", true, "message", "Logged in"));
         } else {
-            return ResponseEntity.ok().body(Map.of("success", false, "message", "未登录"));
+            return ResponseEntity.ok().body(Map.of("success", false, "message", "Not logged in"));
         }
     }
 
     @GetMapping("/logout")
     public ResponseEntity<?> handleLogout() {
-        // 实现登出逻辑（这里可以添加清理会话等操作）
-        return ResponseEntity.ok().body(Map.of("success", true, "message", "已成功退出登录"));
+        // Implement logout logic (add cleanup session operations here)
+        return ResponseEntity.ok().body(Map.of("success", true, "message", "Logged out successfully"));
     }
 
     @PostMapping("/sendVerifyCode")
     public ResponseEntity<?> sendVerifyCode(@RequestParam String email) {
         String emailRegex = "^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$";
         if (!email.matches(emailRegex)) {
-            return ResponseEntity.badRequest().body(Map.of("success", false, "error", "邮箱格式不正确，请重试！"));
+            return ResponseEntity.badRequest().body(Map.of("success", false, "error", "Invalid email format, please try again!"));
         }
-        String code = emailService.sendVerificationCode(email);
-        // 这里可以将验证码存储到缓存或数据库中以供后续验证
-        return ResponseEntity.ok().body(Map.of("success", true, "message", "验证码已发送！"));
+        emailService.sendVerificationCode(email);
+        // Store verification code in cache or database for later verification
+        return ResponseEntity.ok().body(Map.of("success", true, "message", "Verification code sent!"));
     }
 }
