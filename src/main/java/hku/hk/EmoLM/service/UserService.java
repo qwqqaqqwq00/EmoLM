@@ -11,12 +11,12 @@ public class UserService {
     @Autowired
     private UserDao userDao;
 
-    // 验证用户登录
+    // Verify user login
     public boolean authenticateUser(String username, String password) {
         return userDao.authenticateUser(username, password) != null;
     }
 
-    // 注册新用户
+    // Register new user
     public boolean registerUser(String username, String password, String email) {
         return userDao.registerUser(username, password, email);
     }

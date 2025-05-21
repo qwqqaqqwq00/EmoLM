@@ -15,15 +15,15 @@ public class ChatHistoryService {
     @Autowired
     private ChatHistoryDao chatHistoryDao;
 
-    public List<ChatHistoryEntity> getChatHistory(int hid, int uid) { // 修改方法签名，增加 uid 参数
+    public List<ChatHistoryEntity> getChatHistory(int hid, int uid) { // Modified method signature, added uid parameter
         return chatHistoryDao.getChatHistory(hid, uid);
     }
 
     /**
-     * 创建新的聊天历史记录
+     * Create new chat history
      */
     public int createChatHistory(int uid) {
-        // 初始化一个新的聊天历史记录
+        // Initialize a new chat history
         ChatHistoryEntity chatHistory = new ChatHistoryEntity();
         int hid = chatHistoryDao.getLastHid(uid);
         chatHistory.setHid(hid + 1);
@@ -39,13 +39,13 @@ public class ChatHistoryService {
         return chatHistoryDao.getLastHid(uid);
     }
 
-    public void addMessage(int hid, String message, String role, int uid) { // 修改方法签名，增加 uid 参数
+    public void addMessage(int hid, String message, String role, int uid) { // Modified method signature, added uid parameter
         ChatHistoryEntity chatHistory = new ChatHistoryEntity();
         chatHistory.setHid(hid);
         chatHistory.setMessage(message);
         chatHistory.setRole(role);
         chatHistory.setTimestamp(new Date());
-        chatHistory.setUid(uid); // 设置 uid
+        chatHistory.setUid(uid); // Set uid
         chatHistoryDao.addMessage(chatHistory);
     }
 }

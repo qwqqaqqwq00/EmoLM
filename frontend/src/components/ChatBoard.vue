@@ -77,8 +77,8 @@ export default {
 <style>
 body {
   background-color: #000;
-  color: #fff; /* 建议也设置字体颜色为白色，确保可读性 */
-  margin: 0; /* 避免默认白边 */
+  color: #fff; 
+  margin: 0; 
   padding: 0;
 }
 

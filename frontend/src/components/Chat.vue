@@ -91,7 +91,7 @@ export default {
   methods: {
     initMessage() {
         const token = localStorage.getItem('token');
-        const hid = this.$route.query.hid || 0; // 默认 hid=1
+        const hid = this.$route.query.hid || 0;
 
         if (!token) {
             console.error("User token not found in localStorage");
@@ -100,7 +100,7 @@ export default {
 
         this.$axios.post('/api/chat/history', new URLSearchParams({ hid }), {
             headers: {
-                Authorization: `Bearer ${token}` // 将 token 放在请求头中
+                Authorization: `Bearer ${token}` 
             }
         })
             .then(response => {
@@ -119,7 +119,7 @@ export default {
                 }
             })
             .catch(error => {
-                console.error("无法获取历史记录:", error);
+                console.error("Failed to get chat history:", error);
             });
     },
 
@@ -152,7 +152,7 @@ export default {
 
         this.$axios.post('/api/chat/generate', messagePayload, {
             headers: {
-                Authorization: `Bearer ${token}` // 将 token 放在请求头中
+                Authorization: `Bearer ${token}`
             }
         })
             .then(response => {
@@ -222,7 +222,7 @@ export default {
 
 /* Messages content: Base bubble styles */
 .messages-content {
-  max-width: 100%; /* 限制消息框的最大宽度 */
+  max-width: 100%;
   margin: 8px 0 8px 40px;
   padding: 6px 10px 7px;
   border-radius: 10px 10px 10px 0;
@@ -402,22 +402,22 @@ export default {
 }
 
 .messages-box::-webkit-scrollbar {
-  width: 8px; /* 滚动条宽度 */
+  width: 8px; 
 }
 
 .messages-box::-webkit-scrollbar-track {
-  background: transparent; /* 滚动条轨道背景 */
+  background: transparent; 
 }
 
 .messages-box::-webkit-scrollbar-thumb {
-  background: #aaa; /* 滚动条颜色 */
-  border-radius: 4px; /* 圆角 */
+  background: #aaa; 
+  border-radius: 4px; 
 }
 
 .file-list-container {
   display: flex;
-  flex-wrap: wrap; /* 允许换行 */
-  gap: 10px; /* 控制卡片之间的间距 */
+  flex-wrap: wrap; 
+  gap: 10px; 
 }
 
 .file-card {

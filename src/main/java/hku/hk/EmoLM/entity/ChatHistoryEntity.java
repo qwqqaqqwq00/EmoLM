@@ -8,7 +8,7 @@ public class ChatHistoryEntity {
     private String message;
     private String role;
     private Date timestamp;
-    private int uid; // 新增 uid 字段
+    private int uid; // Add uid field
 
     // Getters and Setters
     public int getId() {
@@ -51,11 +51,11 @@ public class ChatHistoryEntity {
         this.timestamp = timestamp;
     }
 
-    public int getUid() { // 新增 getter
+    public int getUid() { // Add getter
         return uid;
     }
 
-    public void setUid(int uid) { // 新增 setter
+    public void setUid(int uid) { // Add setter
         this.uid = uid;
     }
 }

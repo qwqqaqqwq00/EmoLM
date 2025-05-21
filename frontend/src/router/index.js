@@ -48,17 +48,17 @@ const router = createRouter({
     routes,
 });
 
-// 添加全局导航守卫
+// Add global navigation guard
 router.beforeEach((to, from, next) => {
     const token = localStorage.getItem('token');
-    const isAuthenticated = !!token; // 判断用户是否已登录
-    const isPublicPage = ['/login', '/'].includes(to.path); // 公开页面无需登录
+    const isAuthenticated = !!token; // Check if user is authenticated
+    const isPublicPage = ['/login', '/'].includes(to.path); // Public pages do not require login
 
     if (!isAuthenticated && !isPublicPage) {
-        // 如果用户未登录且访问非公开页面，则重定向到登录页面
+        // If user is not authenticated and accessing non-public pages, redirect to login page
         next('/login');
     } else {
-        next(); // 否则继续导航
+        next(); // Otherwise continue navigation
     }
 });
 

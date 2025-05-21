@@ -7,7 +7,7 @@
             v-model="username"
             required
         />
-        <label>用户名</label>
+        <label>Username</label>
       </div>
       <div class="user-box">
         <input
@@ -15,7 +15,7 @@
             type="password"
             required
         />
-        <label>密码</label>
+        <label>Password</label>
       </div>
       <div class="user-box">
         <input
@@ -23,27 +23,27 @@
             type="password"
             required
         />
-        <label>确认密码</label>
+        <label>Confirm Password</label>
       </div>
       <div class="user-box">
         <input
             v-model="email"
             required
         />
-        <label>邮箱</label>
+        <label>Email</label>
       </div>
       <div class="user-box">
         <input
             v-model="verifyCode"
             required
         />
-        <label>验证码</label>
+        <label>Verification Code</label>
       </div>
       <el-button type="primary" round :disabled="isSending" @click="sendVerifyCode">
-        {{ isSending ? `${countdown}s` : "发送验证码" }}
+        {{ isSending ? `${countdown}s` : "Send Code" }}
       </el-button>
-      <el-button type="primary" round @click="handleLogin">登录</el-button>
-      <el-button type="primary" round @click="handleRegister">注册</el-button>
+      <el-button type="primary" round @click="handleLogin">Login</el-button>
+      <el-button type="primary" round @click="handleRegister">Register</el-button>
     </form>
   </div>
 </template>
@@ -73,9 +73,9 @@ export default {
       this.$axios.post("/api/sendVerifyCode", new URLSearchParams({
         email: this.email,
       })).then(() => {
-        alert("验证码已发送，请检查邮箱！");
+        alert("Verification code sent, please check your email!");
       }).catch(error => {
-        alert(error.response.data.error || "发送验证码失败，请重试！");
+        alert(error.response.data.error || "Failed to send verification code, please try again!");
         this.isSending = false;
       });
     },
@@ -96,11 +96,11 @@ export default {
     handleRegister() {
       const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,16}$/;
       if (!passwordRegex.test(this.password)) {
-        alert("密码长度需为8-16位，且必须包含数字和字母！");
+        alert("Password must be 8-16 characters long and contain both letters and numbers!");
         return;
       }
       if (this.password !== this.confirmPassword) {
-        alert("两次输入的密码不一致！");
+        alert("The passwords you entered do not match!");
         return;
       }
       this.$axios.post("/api/register", new URLSearchParams({
@@ -110,10 +110,10 @@ export default {
         email: this.email,
         verifyCode: this.verifyCode,
       })).then(() => {
-        alert("注册成功，请登录！");
+        alert("Registration successful, please login!");
         this.$router.push("/");
       }).catch(error => {
-        alert(error.response.data.error || "注册失败，请重试！");
+        alert(error.response.data.error || "Registration failed, please try again!");
       });
     },
   },

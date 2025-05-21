@@ -30,7 +30,7 @@ public class ChatMessageController {
         if(token != null && token.startsWith("Bearer ")) {
             token = token.substring(7);
         } else {
-            return ResponseEntity.badRequest().body(Map.of("error", "无效的 token 格式"));
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid token format"));
         }
         ResponseEntity<?> uidResponse = authController.getUidFromToken(token);
         if (uidResponse.getStatusCode().is2xxSuccessful()) {
@@ -38,7 +38,7 @@ public class ChatMessageController {
             List<ChatHistoryTitleEntity> titles = chatHistoryTitleService.getChatHistoryTitles(uid);
             return ResponseEntity.ok(titles);
         } else {
-            return ResponseEntity.badRequest().body(Map.of("error", "无效的 token"));
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid token"));
         }
     }
 
@@ -51,7 +51,7 @@ public class ChatMessageController {
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7); // 移除 "Bearer " 前缀
         } else {
-            return ResponseEntity.badRequest().body(Map.of("error", "无效的 token 格式"));
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid token format"));
         }
 
         ResponseEntity<?> uidResponse = authController.getUidFromToken(token);
@@ -71,7 +71,7 @@ public class ChatMessageController {
                 return ResponseEntity.notFound().build();
             }
         } else {
-            return ResponseEntity.badRequest().body(Map.of("error", "无效的 token"));
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid token"));
         }
     }
 
@@ -83,13 +83,13 @@ public class ChatMessageController {
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7); // 移除 "Bearer " 前缀
         } else {
-            return ResponseEntity.badRequest().body(Map.of("error", "无效的 token 格式"));
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid token format"));
         }
         ResponseEntity<?> uidResponse = authController.getUidFromToken(token);
         if (uidResponse.getStatusCode().is2xxSuccessful()) {
             Map<String, Object> body = (Map<String, Object>) uidResponse.getBody();
             if (body == null || !body.containsKey("uid")) {
-                return ResponseEntity.badRequest().body(Map.of("error", "无效的 token"));
+                return ResponseEntity.badRequest().body(Map.of("error", "Invalid token"));
             }
             int uid = (int) body.get("uid");
 
@@ -100,7 +100,7 @@ public class ChatMessageController {
             // 返回生成的 hid
             return ResponseEntity.ok(Map.of("hid", hid));
         } else {
-            return ResponseEntity.badRequest().body(Map.of("error", "无效的 token"));
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid token"));
         }
     }
 
@@ -118,18 +118,18 @@ public class ChatMessageController {
             if (token != null && token.startsWith("Bearer ")) {
                 token = token.substring(7);
             } else {
-                return ResponseEntity.badRequest().body(Map.of("error", "无效的 token 格式"));
+                return ResponseEntity.badRequest().body(Map.of("error", "Invalid token format"));
             }
 
             ResponseEntity<?> uidResponse = authController.getUidFromToken(token);
             if (uidResponse.getStatusCode().is2xxSuccessful()) {
                 Map<String, Object> body = (Map<String, Object>) uidResponse.getBody();
                 if (body == null || !body.containsKey("uid")) {
-                    return ResponseEntity.badRequest().body(Map.of("error", "无效的 token"));
+                    return ResponseEntity.badRequest().body(Map.of("error", "Invalid token"));
                 }
                 int uid = (int) body.get("uid");
                 if (hid == 0) {
-                    return ResponseEntity.badRequest().body(Map.of("error", "无效的 hid"));
+                    return ResponseEntity.badRequest().body(Map.of("error", "Invalid hid"));
                 }
                 Map<String, Object> response = Map.of(
                         "message", "This is a generated response to: " + message,
@@ -141,10 +141,10 @@ public class ChatMessageController {
 
                 return ResponseEntity.ok(response);
             } else {
-                return ResponseEntity.badRequest().body(Map.of("error", "无效的 token"));
+                return ResponseEntity.badRequest().body(Map.of("error", "Invalid token"));
             }
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("error", "处理消息时发生错误"));
+            return ResponseEntity.badRequest().body(Map.of("error", "Error processing message"));
         }
     }
 }

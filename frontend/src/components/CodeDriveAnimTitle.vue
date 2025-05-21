@@ -9,7 +9,7 @@ export default {
     },
   },
   mounted() {
-    const container = this.$el; // 限制动画范围到当前组件
+    const container = this.$el;
     const tl = gsap.timeline({
       defaults: {
         duration: 2,
@@ -105,8 +105,8 @@ svg {
 
 @media (prefers-color-scheme: dark) {
   .code-drive-anim-title {
-    background: #000; /* 强制背景为黑色 */
-    color: #fff; /* 强制字体为白色 */
+    background: #000;
+    color: #fff;
   }
 }
 </style>

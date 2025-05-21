@@ -7,7 +7,7 @@
             v-model="username"
             required
         />
-        <label>用户名</label>
+        <label>Username</label>
       </div>
       <div class="user-box">
         <input
@@ -15,10 +15,10 @@
             type="password"
             required
         />
-        <label>密码</label>
+        <label>Password</label>
       </div>
-      <el-button type="primary" round @click="handleLogin">登录</el-button>
-      <el-button type="primary" round @click="gotoReg">注册</el-button>
+      <el-button type="primary" round @click="handleLogin">Login</el-button>
+      <el-button type="primary" round @click="gotoReg">Register</el-button>
     </form>
   </div>
 </template>
@@ -44,16 +44,16 @@ export default {
                 password: this.password
             }));
             if (response.data.success) {
-                // 将 token 存储到 localStorage
+                // Store token in localStorage
                 localStorage.setItem('token', response.data.token);
-                alert("登录成功！");
+                alert("Login successful!");
                 this.$router.push('/dashboard');
             } else {
-                alert(response.data.error || "登录失败，请重试！");
+                alert(response.data.error || "Login failed, please try again!");
             }
         } catch (error) {
-            console.error("登录失败:", error);
-            alert("登录失败，请检查网络或稍后再试！");
+            console.error("Login failed:", error);
+            alert("Login failed, please check your network connection or try again later!");
         }
     },
     gotoReg() {

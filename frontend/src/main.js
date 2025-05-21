@@ -1,17 +1,17 @@
-import { createApp } from 'vue'; // 使用 Vue 3
+import { createApp } from 'vue'; // Use Vue 3
 import App from './App.vue';
 import router from './router';
 
-import ElementPlus from 'element-plus'; // 引入 element-plus
-import 'element-plus/dist/index.css'; // 引入 element-plus 样式
+import ElementPlus from 'element-plus'; // Import element-plus
+import 'element-plus/dist/index.css'; // Import element-plus styles
 
 import axios from 'axios';
 
 const app = createApp(App);
 
-app.config.globalProperties.$axios = axios; // 将 axios 挂载到全局属性
+app.config.globalProperties.$axios = axios; // Mount axios to global property
 
-app.use(router); // 使用路由
-app.use(ElementPlus); // 使用 element-plus
+app.use(router); // Use router
+app.use(ElementPlus); // Use element-plus
 
-app.mount('#app'); // 挂载到 #app
+app.mount('#app'); // Mount to #app

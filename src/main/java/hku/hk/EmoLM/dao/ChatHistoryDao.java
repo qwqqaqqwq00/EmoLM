@@ -15,14 +15,14 @@ public class ChatHistoryDao {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public List<ChatHistoryEntity> getChatHistory(int hid, int uid) { // 修改方法签名，增加 uid 参数
+    public List<ChatHistoryEntity> getChatHistory(int hid, int uid) { // Modified method signature, added uid parameter
         String sql = "SELECT * FROM chat_history WHERE hid = ? AND uid = ? ORDER BY id ";
-        // 显式指定参数类型，防止 SQL 注入
+        // Explicitly specify parameter types to prevent SQL injection
         return jdbcTemplate.query(sql, new Object[]{hid, uid}, new int[]{java.sql.Types.INTEGER, java.sql.Types.INTEGER}, new BeanPropertyRowMapper<>(ChatHistoryEntity.class));
     }
 
     public void addMessage(ChatHistoryEntity chatHistory) {
-        String sql = "INSERT INTO chat_history (hid, message, role, timestamp, uid) VALUES (?, ?, ?, ?, ?)"; // 修改 SQL，增加 uid 字段
+        String sql = "INSERT INTO chat_history (hid, message, role, timestamp, uid) VALUES (?, ?, ?, ?, ?)"; // Modified SQL, added uid field
         jdbcTemplate.update(sql, chatHistory.getHid(), chatHistory.getMessage(), chatHistory.getRole(), chatHistory.getTimestamp(), chatHistory.getUid());
     }
 

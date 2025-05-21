@@ -6,7 +6,7 @@ public class ChatHistoryTitleEntity {
     private String title;
     private int uid;
 
-    // 添加无参构造函数
+    // Add no-args constructor
     public ChatHistoryTitleEntity() {
     }
 

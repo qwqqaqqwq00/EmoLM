@@ -5,9 +5,9 @@ module.exports = defineConfig({
     port: 80,
     proxy: {
       '/api': {
-        target: 'http://localhost:8080', // 后端服务器地址
-        changeOrigin: true, // 支持跨域
-        pathRewrite: { '^/api': '/api' }, // 保留 /api 前缀
+        target: 'http://localhost:8080', // Backend server address
+        changeOrigin: true, // Support cross-origin
+        pathRewrite: { '^/api': '/api' }, // Keep /api prefix
       },
     },
   }

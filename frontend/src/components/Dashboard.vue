@@ -3,7 +3,7 @@
     <CodeDriveAnimTitle class="background" :titles="titles"/>
     <div class="content">
       <div class="buttons">
-        <div class="btn primary" @click="handleChat">开始聊天</div><div class="btn secondary" @click="handleLogout">退出登录</div>
+        <div class="btn primary" @click="handleChat">Start Chat</div><div class="btn secondary" @click="handleLogout">Logout</div>
       </div>
     </div>
   </el-container>
@@ -31,27 +31,27 @@ export default {
     handleLogout() {
       this.$axios.get("/api/logout")
           .then(() => {
-            alert("已成功退出登录");
+            alert("Successfully logged out");
             this.$router.push("/");
           })
           .catch(error => {
-            alert(error.response?.data?.error || "退出登录失败，请重试！");
+            alert(error.response?.data?.error || "Failed to logout, please try again!");
           });
     },
     handleUploadSuccess(response) {
-      alert("文件上传成功：" + response.message);
+      alert("File uploaded successfully: " + response.message);
     },
     handleUploadError(error) {
-      alert("文件上传失败：" + (error.response?.data?.error || "请重试！"));
+      alert("File upload failed: " + (error.response?.data?.error || "Please try again!"));
     },
     validateFile(file) {
       const isValidType = file.type.startsWith("image/") || file.type.startsWith("video/");
       const isValidSize = file.size / 1024 / 1024 < 10;
       if (!isValidType) {
-        this.$message.error("仅支持上传图片或视频文件！");
+        this.$message.error("Only image or video files are supported!");
       }
       if (!isValidSize) {
-        this.$message.error("文件大小不能超过10MB！");
+        this.$message.error("File size cannot exceed 10MB!");
       }
       return isValidType && isValidSize;
     },
@@ -76,12 +76,12 @@ $white: #fff;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 0; /* 背景层 */
+  z-index: 0; /* Background layer */
 }
 
 .content {
   position: relative;
-  z-index: 1; /* 内容层，确保在背景上方 */
+  z-index: 1; /* Content layer, ensure above background */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -110,14 +110,14 @@ $white: #fff;
   text-decoration: none;
   text-transform: uppercase;
   width: 100%;
-  border: none; /* 默认无边框 */
+  border: none; /* No border by default */
   transition: all 1000ms linear;
 
   &:hover {
-    border-top: 0px solid #fff !important; /* 添加上边框 */
-    border-bottom: 0px solid #fff !important; /* 添加下边框 */
-    border-left: none !important; /* 确保无左边框 */
-    border-right: none !important; /* 确保无右边框 */
+    border-top: 0px solid #fff !important; /* Add top border */
+    border-bottom: 0px solid #fff !important; /* Add bottom border */
+    border-left: none !important; /* Ensure no left border */
+    border-right: none !important; /* Ensure no right border */
   }
 
   &::before,
@@ -132,16 +132,16 @@ $white: #fff;
   }
 
   &::before {
-    top: 0; /* 上边框 */
+    top: 0; /* Top border */
   }
 
   &::after {
-    bottom: 0; /* 下边框 */
+    bottom: 0; /* Bottom border */
   }
 
   &:hover::before,
   &:hover::after {
-    width: 100%; /* 从中间扩展到两侧 */
+    width: 100%; /* Expand from center to sides */
     left: 0;
   }
 }
@@ -153,7 +153,7 @@ $white: #fff;
   transition: all 0.3s ease;
 
   &:hover {
-    color: red; /* 设置 hover 时的文字颜色为红色 */
+    color: red; /* Set text color to red on hover */
   }
 
   &::before,
@@ -168,22 +168,22 @@ $white: #fff;
   }
 
   &::before {
-    top: 0; /* 上边框 */
+    top: 0; /* Top border */
   }
 
   &::after {
-    bottom: 0; /* 下边框 */
+    bottom: 0; /* Bottom border */
   }
 
   &:hover {
-    color: red; /* 设置文字颜色变红 */
+    color: red; /* Set text color to red */
   }
 
   &:hover::before,
   &:hover::after {
-    width: 100%; /* 从中间扩展到两侧 */
+    width: 100%; /* Expand from center to sides */
     left: 0;
-    background-color: red; /* 设置上下边框变红 */
+    background-color: red; /* Set top and bottom borders to red */
   }
 }
 </style>

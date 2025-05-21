@@ -18,7 +18,7 @@ public class EmailService {
 
     private final Map<String, String> verificationCodes = new ConcurrentHashMap<>();
     private final Map<String, Long> codeExpiryTimes = new ConcurrentHashMap<>();
-    private static final long CODE_EXPIRY_DURATION = 5 * 60 * 1000; // 5分钟
+    private static final long CODE_EXPIRY_DURATION = 5 * 60 * 1000; // 5 minutes
 
     @Autowired
     private JavaMailSender mailSender;
@@ -29,7 +29,7 @@ public class EmailService {
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     public EmailService() {
-        // 定时清理过期验证码
+        // Clean expired verification codes periodically
         scheduler.scheduleAtFixedRate(this::removeExpiredCodes, 1, 1, TimeUnit.MINUTES);
     }
 
@@ -38,24 +38,24 @@ public class EmailService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(from);
         message.setTo(toEmail);
-        message.setSubject("邮箱验证码");
-        message.setText("您的验证码是：" + code + "，请在5分钟内使用。");
+        message.setSubject("Email Verification Code");
+        message.setText("Your verification code is: " + code + ", please use it within 5 minutes.");
         System.out.println(code);
         try {
-            mailSender.send(message); // 发送邮件
+            mailSender.send(message); // Send email
             verificationCodes.put(toEmail, code);
             codeExpiryTimes.put(toEmail, System.currentTimeMillis() + CODE_EXPIRY_DURATION);
             return code;
         } catch (Exception e) {
-            // 增加详细日志记录
-            System.err.println("发送验证码失败: " + e.getMessage());
-            throw new RuntimeException("邮件发送失败，请检查 SMTP 配置或网络连接！");
+            // Add detailed logging
+            System.err.println("Failed to send verification code: " + e.getMessage());
+            throw new RuntimeException("Failed to send email. Please check SMTP configuration or network connection!");
         }
     }
 
     private String generateVerificationCode() {
         Random random = new Random();
-        int code = 100000 + random.nextInt(900000); // 生成6位随机验证码
+        int code = 100000 + random.nextInt(900000); // Generate 6-digit random verification code
         return String.valueOf(code);
     }
 

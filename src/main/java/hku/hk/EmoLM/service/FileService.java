@@ -16,12 +16,12 @@ public class FileService {
     private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
     public FileService() {
-        // 初始化上传目录
+        // Initialize upload directory
         File uploadDir = new File(UPLOAD_DIR);
         if (!uploadDir.exists()) {
             boolean created = uploadDir.mkdirs();
             if (!created) {
-                throw new RuntimeException("无法创建上传目录：" + UPLOAD_DIR);
+                throw new RuntimeException("Cannot create upload directory: " + UPLOAD_DIR);
             }
         }
     }
@@ -36,7 +36,7 @@ public class FileService {
             System.out.println("Saving file to: " + filePath);
             file.transferTo(new File(filePath));
         } catch (IOException e) {
-            throw new RuntimeException("文件保存失败", e);
+            throw new RuntimeException("File save failed", e);
         }
 
         return filePath;
@@ -44,16 +44,16 @@ public class FileService {
 
     private void validateFile(MultipartFile file) {
         if (file.isEmpty()) {
-            throw new IllegalArgumentException("文件不能为空");
+            throw new IllegalArgumentException("File cannot be empty");
         }
 
         if (file.getSize() > MAX_FILE_SIZE) {
-            throw new IllegalArgumentException("文件大小不能超过10MB");
+            throw new IllegalArgumentException("File size cannot exceed 10MB");
         }
 
         String contentType = file.getContentType();
         if (contentType == null || (!contentType.startsWith("image/") && !contentType.startsWith("video/"))) {
-            throw new IllegalArgumentException("仅支持图片和视频文件");
+            throw new IllegalArgumentException("Only image and video files are supported");
         }
     }
 
@@ -62,7 +62,7 @@ public class FileService {
         long currentTime = System.currentTimeMillis();
 
         for (File file : Objects.requireNonNull(uploadDir.listFiles())) {
-            if (currentTime - file.lastModified() > 24 * 60 * 60 * 1000) { // 超过24小时
+            if (currentTime - file.lastModified() > 24 * 60 * 60 * 1000) { // Over 24 hours
                 file.deleteOnExit();
             }
         }

@@ -6,8 +6,8 @@
         <circle cx="12" cy="12" r="3"/>
         <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33
              1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51
-             1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0
-             .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0
+             1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65
+             1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0
              1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65
              1.65 0 0 0 1.82.33h.09a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65
              1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83
@@ -18,8 +18,8 @@
     <div class="user-avatar" @click="toggleDropdown">
       {{ usernameInitial }}
       <ul v-if="dropdownVisible" class="dropdown-menu">
-        <li @click="goToDashboard">个人页面</li>
-        <li @click="logout">退出登录</li>
+        <li @click="goToDashboard">Dashboard</li>
+        <li @click="logout">Logout</li>
       </ul>
     </div>
   </header>
@@ -30,7 +30,7 @@ export default {
   name: "ChatHeader",
   data() {
     return {
-      username: "username", // 默认用户名
+      username: "username", // default username
       dropdownVisible: false,
     };
   },
@@ -50,11 +50,11 @@ export default {
       this.$axios.get("/api/logout")
           .then(() => {
             localStorage.removeItem('token');
-            alert("已成功退出登录");
+            alert("Successfully logged out");
             this.$router.push("/");
           })
           .catch(error => {
-            alert(error.response?.data?.error || "退出登录失败，请重试！");
+            alert(error.response?.data?.error || "Failed to logout, please try again!");
           });
     },
     createNewChatHistory() {
