@@ -155,3 +155,15 @@ Files are not yet utilized.
 
 ![file_upload.png](frontend/public/file_upload.png)
 
+## TODOs
+
+- [ ] Add text input verify
+- [ ] Add file upload verify
+- [ ] Add settings
+- [ ] Add chat message edit
+- [ ] Add chat history table update service
+- [ ] Add file id for history deserialization
+- [ ] Utilize file use in chat
+- [ ] Sample chats...
+- [ ] Utilize JWT expire time
+- [ ] Attach MCP service to LLM (local Emotion-LLaMA or remote LLM, options for users).
