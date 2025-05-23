@@ -3,7 +3,7 @@
     <CodeDriveAnimTitle class="background" :titles="titles"/>
     <div class="content">
       <div class="buttons">
-        <div class="btn primary" @click="handleChat">Start Chat</div><div class="btn secondary" @click="handleLogout">Logout</div>
+        <div class="btn primary" @click="handleChat">Chat</div><div class="btn secondary" @click="handleLogout">Logout</div>
       </div>
     </div>
   </el-container>
