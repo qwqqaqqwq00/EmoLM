@@ -5,6 +5,7 @@ import com.google.common.hash.Funnels;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.nio.charset.StandardCharsets;
 
 @Component
 public class UserBloomFilter {
