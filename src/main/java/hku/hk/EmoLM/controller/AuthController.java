@@ -20,8 +20,6 @@ import java.util.Date;
 @RequestMapping("/api")
 public class AuthController {
 
-    private static final String SECRET_KEY = "[-70, -71, 9, 111, -75, 124, 109, 54, 63, -118, 31, -92, 19, 95, -9, 65, 18, 92, 59, -110, 47, -120, 43, 114, 104, 117, 68, -107, -13, -81, -113, 83, -102, -12, 85, 44, 30, -10, -100, -43, 54, 77, -93, -108, -102, -34, 52, 43, -54, 19, -78, 55, -114, 44, -16, -17, 105, -54, -69, 111, 19, -45, -107, 4]"; // 替换为实际的密钥
-
     @Autowired
     private UserService userService;
 
@@ -31,38 +29,12 @@ public class AuthController {
     @Autowired
     private PasswordService passwordService;
 
-    @PostMapping("/getuid")
-    public ResponseEntity<?> getUidFromToken(@RequestParam String token) {
-        try {
-            Claims claims = Jwts.parserBuilder()
-                .setSigningKey(SECRET_KEY.getBytes())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-
-            if (claims.get("uid") == null) {
-                return ResponseEntity.badRequest().body(Map.of("success", false, "error", "JWT does not contain uid claim"));
-            }
-
-            int uid = (Integer) claims.get("uid");
-            return ResponseEntity.ok().body(Map.of("success", true, "uid", uid));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("success", false, "error", "Invalid token"));
-        }
-    }
-
     @PostMapping("/login")
     public ResponseEntity<?> handleLogin(@RequestParam String username, @RequestParam String password) {
         String encryptedPassword = passwordService.encryptPassword(password);
         if (userService.authenticateUser(username, encryptedPassword)) {
             // JWT token
-            String token = Jwts.builder()
-                    .setSubject(username)
-                    .claim("uid", userService.getUserIdByUsername(username, encryptedPassword))
-                    .setIssuedAt(new Date())
-                    .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 24 hours expiration
-                    .signWith(Keys.hmacShaKeyFor(SECRET_KEY.getBytes()), SignatureAlgorithm.HS512) // Use Keys.hmacShaKeyFor
-                    .compact();
+            String token = userService.JWTToken(username, encryptedPassword);
             return ResponseEntity.ok().body(Map.of("success", true, "message", "Login successful", "token", token));
         }
         return ResponseEntity.badRequest().body(Map.of("success", false, "error", "Invalid username or password, please try again!"));
@@ -84,10 +56,14 @@ public class AuthController {
         return ResponseEntity.badRequest().body(Map.of("success", false, "error", "Password mismatch or registration failed, please try again!"));
     }
 
-    @PostMapping("/isAuthenticated")
-    public ResponseEntity<?> isAuthenticated(@RequestParam String token) {
+    @GetMapping("/isAuthenticated")
+    public ResponseEntity<?> isAuthenticated(@RequestHeader("Authorization") String token) {
         if (token != null && !token.isEmpty()) {
-            return ResponseEntity.ok().body(Map.of("success", true, "message", "Logged in"));
+            Object uid = userService.UserToken2Uid(token);
+            if(uid != null){
+                return ResponseEntity.ok().body(Map.of("success", true, "message", "Logged in"));
+            }
+            return ResponseEntity.ok().body(Map.of("success", false, "message", "Not logged in"));
         } else {
             return ResponseEntity.ok().body(Map.of("success", false, "message", "Not logged in"));
         }

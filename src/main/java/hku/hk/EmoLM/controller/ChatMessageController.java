@@ -4,13 +4,13 @@ import hku.hk.EmoLM.entity.ChatHistoryEntity;
 import hku.hk.EmoLM.entity.ChatHistoryTitleEntity;
 import hku.hk.EmoLM.service.ChatHistoryService;
 import hku.hk.EmoLM.service.ChatHistoryTitleService;
+import hku.hk.EmoLM.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/chat")
@@ -23,24 +23,16 @@ public class ChatMessageController {
     private ChatHistoryTitleService chatHistoryTitleService;
 
     @Autowired
-    private AuthController authController;
+    private UserService userService;
 
     @PostMapping("/history/titles")
     public ResponseEntity<?> getChatHistoryTitles(@RequestHeader("Authorization") String token) {
-        if(token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7);
-        } else {
-            return ResponseEntity.badRequest().body(Map.of("error", "Invalid token format"));
-        }
-        ResponseEntity<?> uidResponse = authController.getUidFromToken(token);
-        if (uidResponse.getStatusCode().is2xxSuccessful()) {
-            @SuppressWarnings("unchecked")
-            int uid = (int) ((Map<String, Object>) Objects.requireNonNull(uidResponse.getBody())).get("uid");
-            List<ChatHistoryTitleEntity> titles = chatHistoryTitleService.getChatHistoryTitles(uid);
+        Object uid = userService.UserToken2Uid(token);
+        if(uid != null){
+            List<ChatHistoryTitleEntity> titles = chatHistoryTitleService.getChatHistoryTitles((Integer) uid);
             return ResponseEntity.ok(titles);
-        } else {
-            return ResponseEntity.badRequest().body(Map.of("error", "Invalid token"));
         }
+        return ResponseEntity.ok(Map.of("error", "Not logged in"));
     }
 
     /**
@@ -48,25 +40,9 @@ public class ChatMessageController {
      */
     @PostMapping("/history")
     public ResponseEntity<?> getChatHistory(@RequestParam int hid, @RequestHeader("Authorization") String token) {
-        // get uid from token
-        if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7); // remove "Bearer " prefix
-        } else {
-            return ResponseEntity.badRequest().body(Map.of("error", "Invalid token format"));
-        }
-
-        ResponseEntity<?> uidResponse = authController.getUidFromToken(token);
-        if (uidResponse.getStatusCode().is2xxSuccessful()) {
-            Object responseBody = uidResponse.getBody();
-            if (!(responseBody instanceof Map<?, ?>)) {
-                return ResponseEntity.badRequest().body(Map.of("error", "Invalid response format"));
-            }
-            @SuppressWarnings("unchecked")
-            Map<String, Object> body = (Map<String, Object>) responseBody;
-            if (body == null || !body.containsKey("uid")) {
-                return ResponseEntity.badRequest().body(Map.of("error", body.toString()));
-            }
-            int uid = (int) body.get("uid");
+        Object uid_raw = userService.UserToken2Uid(token);
+        if(uid_raw != null){
+            int uid = (int) uid_raw;
             if(hid == 0) {
                 hid = chatHistoryService.getLastHid(uid);
             }
@@ -76,9 +52,8 @@ public class ChatMessageController {
             } else {
                 return ResponseEntity.notFound().build();
             }
-        } else {
-            return ResponseEntity.badRequest().body(Map.of("error", "Invalid token"));
         }
+        return ResponseEntity.ok(Map.of("error", "Not logged in"));
     }
 
     /**
@@ -86,29 +61,17 @@ public class ChatMessageController {
      */
     @PostMapping("/create")
     public ResponseEntity<?> createChatHistory(@RequestHeader("Authorization") String token) {
-        if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7); // remove "Bearer " prefix
-        } else {
-            return ResponseEntity.badRequest().body(Map.of("error", "Invalid token format"));
-        }
-        ResponseEntity<?> uidResponse = authController.getUidFromToken(token);
-        if (uidResponse.getStatusCode().is2xxSuccessful()) {
-            @SuppressWarnings("unchecked")
-            Map<String, Object> body = (Map<String, Object>) uidResponse.getBody();
-            if (body == null || !body.containsKey("uid")) {
-                return ResponseEntity.badRequest().body(Map.of("error", "Invalid token"));
-            }
-            int uid = (int) body.get("uid");
-
+        Object uid_raw = userService.UserToken2Uid(token);
+        if(uid_raw != null){
+            int uid = (int) uid_raw;
             // create new chat history
             int hid = chatHistoryService.createChatHistory(uid);
             chatHistoryTitleService.addChatHistoryTitle(hid, uid);
 
             // return hid
             return ResponseEntity.ok(Map.of("hid", hid));
-        } else {
-            return ResponseEntity.badRequest().body(Map.of("error", "Invalid token"));
         }
+        return ResponseEntity.ok(Map.of("error", "Not logged in"));
     }
 
     /**
@@ -121,21 +84,9 @@ public class ChatMessageController {
             @RequestParam(required = false) int hid,
             @RequestHeader("Authorization") String token) {
         try {
-            System.out.println(token);
-            if (token != null && token.startsWith("Bearer ")) {
-                token = token.substring(7);
-            } else {
-                return ResponseEntity.badRequest().body(Map.of("error", "Invalid token format"));
-            }
-
-            ResponseEntity<?> uidResponse = authController.getUidFromToken(token);
-            if (uidResponse.getStatusCode().is2xxSuccessful()) {
-                @SuppressWarnings("unchecked")
-                Map<String, Object> body = (Map<String, Object>) uidResponse.getBody();
-                if (body == null || !body.containsKey("uid")) {
-                    return ResponseEntity.badRequest().body(Map.of("error", "Invalid token"));
-                }
-                int uid = (int) body.get("uid");
+            Object uid_raw = userService.UserToken2Uid(token);
+            if(uid_raw != null){
+                int uid = (int) uid_raw;
                 if (hid == 0) {
                     return ResponseEntity.badRequest().body(Map.of("error", "Invalid hid"));
                 }
@@ -148,9 +99,8 @@ public class ChatMessageController {
                 chatHistoryService.addMessage(hid, response.get("message").toString(), "assistant", uid);
 
                 return ResponseEntity.ok(response);
-            } else {
-                return ResponseEntity.badRequest().body(Map.of("error", "Invalid token"));
             }
+            return ResponseEntity.ok(Map.of("error", "Not logged in"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("error", "Error processing message"));
         }

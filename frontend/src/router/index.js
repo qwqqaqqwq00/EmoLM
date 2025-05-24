@@ -49,17 +49,31 @@ const router = createRouter({
 });
 
 // Add global navigation guard
-router.beforeEach((to, from, next) => {
-    const token = localStorage.getItem('token');
-    const isAuthenticated = !!token; // Check if user is authenticated
-    const isPublicPage = ['/login', '/'].includes(to.path); // Public pages do not require login
-
-    if (!isAuthenticated && !isPublicPage) {
-        // If user is not authenticated and accessing non-public pages, redirect to login page
-        next('/login');
-    } else {
-        next(); // Otherwise continue navigation
-    }
-});
+// router.beforeEach((to, from, next) => {
+//     const token = localStorage.getItem('token');
+//     axios.get('/api/isAuthenticated',  {
+//         headers: {
+//             Authorization: `Bearer ${token}`,
+//         },
+//     })
+//     .then(response => {
+//         const isAuthenticated = response.data.success;
+//         const isPublicPage = ['/login', '/register', '/'].includes(to.path);
+//
+//         if (!isAuthenticated && !isPublicPage) {
+//             console.log("redirect:/login");
+//             next('/login');
+//         } else {
+//             next();
+//         }
+//     })
+//     .catch(() => {
+//         if(to.path === '/login') {
+//             next();
+//         }else{
+//             next('/login');
+//         }
+//     });
+// });
 
 export default router;

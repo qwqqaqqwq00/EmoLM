@@ -34,7 +34,7 @@ public class UserDao {
     }
 
     public Object getUserIdByUsername(String username, String password) {
-        String  query = "SELECT id FROM users WHERE username = ? AND password = ?";
+        String query = "SELECT id FROM users WHERE username = ? AND password = ?";
         try {
             return jdbcTemplate.queryForObject(query,
                     new Object[]{username, password},
@@ -42,6 +42,18 @@ public class UserDao {
                     Integer.class);
         } catch (Exception e) {
             // if query fails (e.g. user does not exist or password is incorrect), return null
+            return null;
+        }
+    }
+
+    public Object getUserId(int id) {
+        String query = "SELECT id FROM users WHERE id = ?";
+        try {
+            return jdbcTemplate.queryForObject(query,
+                    new Object[]{id},
+                    new int[]{Types.INTEGER},
+                    Integer.class);
+        } catch (Exception ignored) {
             return null;
         }
     }
