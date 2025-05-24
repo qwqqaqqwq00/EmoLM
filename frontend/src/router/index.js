@@ -5,6 +5,7 @@ import Dashboard from "@/components/Dashboard.vue";
 import ChatDashboard from "@/components/ChatBoard.vue";
 import UploadCard from "@/components/UploadCard.vue";
 import CodeDriveAnimTitle from "@/components/CodeDriveAnimTitle.vue";
+import axios from "axios";
 
 const routes = [
     {
@@ -49,31 +50,31 @@ const router = createRouter({
 });
 
 // Add global navigation guard
-// router.beforeEach((to, from, next) => {
-//     const token = localStorage.getItem('token');
-//     axios.get('/api/isAuthenticated',  {
-//         headers: {
-//             Authorization: `Bearer ${token}`,
-//         },
-//     })
-//     .then(response => {
-//         const isAuthenticated = response.data.success;
-//         const isPublicPage = ['/login', '/register', '/'].includes(to.path);
-//
-//         if (!isAuthenticated && !isPublicPage) {
-//             console.log("redirect:/login");
-//             next('/login');
-//         } else {
-//             next();
-//         }
-//     })
-//     .catch(() => {
-//         if(to.path === '/login') {
-//             next();
-//         }else{
-//             next('/login');
-//         }
-//     });
-// });
+router.beforeEach((to, from, next) => {
+    const token = localStorage.getItem('token');
+    axios.get('/api/isAuthenticated', {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    })
+    .then(response => {
+        const isAuthenticated = response.data.success;
+        const isPublicPage = ['/login', '/register', '/'].includes(to.path);
+
+        if (!isAuthenticated && !isPublicPage) {
+            console.log("redirect:/login");
+            next('/login');
+        } else {
+            next();
+        }
+    })
+    .catch(error => {
+        if (error.response && error.response.status === 401) {
+            next('/login');
+        } else {
+            next();
+        }
+    });
+});
 
 export default router;
