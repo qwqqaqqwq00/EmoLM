@@ -52,8 +52,8 @@ export default {
         .catch(error => {
           console.error("Failed to fetch chat history titles:", error);
         });
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -70,7 +70,6 @@ export default {
       </ul>
     </div>
     <Chat class="chat-card"/>
-    <div class="padding-space"></div>
   </div>
 </template>
 
@@ -92,7 +91,7 @@ body {
 }
 
 .nav-list {
-  flex: 1; /* Takes remaining width */
+  flex: auto; /* Takes remaining width */
   width: 20%;
   height: 100%; /* Full height of .chat-board */
   overflow-y: auto; /* Scroll if content overflows */
@@ -103,13 +102,8 @@ body {
 
 /* Style for .chat-window: 50% width, full height */
 .chat-card {
-  width: 60%; /* 50% of parent width */
+  width: 70%; /* 50% of parent width */
   height: 100%; /* Full height of .chat-board */
-}
-
-.padding-space {
-  width: 20%;
-  height: 100%;
 }
 
 .nav-list li{

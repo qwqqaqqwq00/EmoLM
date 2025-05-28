@@ -51,6 +51,16 @@
       </div>
     </form>
     <UploadCard v-if="showUploadCard" @close="toggleUploadCard" @update-file-list="updateFileList" @staging-files="stageFile"/>
+    <!-- 新增：padding-space -->
+  </div>
+  <div class="padding-space">
+    <div v-if="filePreviews.length" class="file-preview-container">
+      <div v-for="preview in filePreviews" :key="preview.name" class="file-preview-item">
+        <img v-if="preview.type.startsWith('image')" :src="preview.url" alt="Image Preview" class="image-preview"/>
+        <video v-else-if="preview.type.startsWith('video')" :src="preview.url" controls class="video-preview"></video>
+        <div class="file-name">{{ preview.name }}</div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -73,6 +83,7 @@ export default {
       showUploadCard: false,
       fileList: [],
       stagedFiles: [],
+      filePreviews: [],
     };
   },
   mounted() {
@@ -124,55 +135,60 @@ export default {
     },
 
     sendMessage() {
-        if (this.newMessage.trim() === '') return;
+      if (this.newMessage.trim() === '') return;
 
-        const token = localStorage.getItem('token');
-        if (!token) {
-            console.error("User token not found in localStorage");
-            return;
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error("User token not found in localStorage");
+        return;
+      }
+
+      const userMessage = {
+        id: this.messages.length + 1,
+        value: this.newMessage,
+        role: 'human',
+        timestamp: new Date(),
+        isNew: true,
+        files: this.stagedFiles.length > 0 ? this.stagedFiles.map(file => file.name) : []
+      };
+      this.messages.push(userMessage);
+      this.filePreviews = this.stagedFiles.map(file => ({
+        name: file.name,
+        type: file.type,
+        url: URL.createObjectURL(file),
+      }));
+
+      const messagePayload = new URLSearchParams({
+        message: this.newMessage,
+        files: this.stagedFiles.length > 0 ? this.stagedFiles.map(file => file.name) : [],
+        hid: this.$route.query.hid || 0
+      });
+
+      this.stagedFiles = [];
+
+      this.$axios.post('/api/chat/generate', messagePayload, {
+        headers: {
+          Authorization: `Bearer ${token}`
         }
-
-        const userMessage = {
+      })
+        .then(response => {
+          const newMessage = {
             id: this.messages.length + 1,
-            value: this.newMessage,
-            role: 'human',
+            value: response.data.message || "No response from server",
+            role: 'assistant',
             timestamp: new Date(),
             isNew: true,
-            files: this.stagedFiles.length > 0 ? this.stagedFiles.map(file => file.name) : []
-        };
-        this.messages.push(userMessage);
-
-        const messagePayload = new URLSearchParams({
-            message: this.newMessage,
-            files: this.stagedFiles.length > 0 ? this.stagedFiles.map(file => file.name) : [],
-            hid: this.$route.query.hid || 0
-        });
-
-        this.stagedFiles = [];
-
-        this.$axios.post('/api/chat/generate', messagePayload, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
+            files: response.data.files || []
+          };
+          this.messages.push(newMessage);
+          this.newMessage = '';
+          this.stagedFiles = [];
+          this.scrollToBottom();
         })
-            .then(response => {
-                const newMessage = {
-                    id: this.messages.length + 1,
-                    value: response.data.message || "No response from server",
-                    role: 'assistant',
-                    timestamp: new Date(),
-                    isNew: true,
-                    files: response.data.files || []
-                };
-                this.messages.push(newMessage);
-                this.newMessage = '';
-                this.stagedFiles = [];
-                this.scrollToBottom();
-            })
-            .catch(error => {
-                console.error("Failed to send message:", error);
-                alert("Failed to send message. Please try again later.");
-            });
+        .catch(error => {
+          console.error("Failed to send message:", error);
+          alert("Failed to send message. Please try again later.");
+        });
     },
     toggleUploadCard() {
       this.showUploadCard = !this.showUploadCard;
@@ -449,5 +465,53 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* 新增：padding-space 样式 */
+.padding-space {
+  width: 20%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #35393b;
+}
+
+.file-preview-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px;
+}
+
+.file-preview-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.image-preview {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.video-preview {
+  width: 100px;
+  height: 100px;
+  border-radius: 5px;
+}
+
+.file-name {
+  font-size: 12px;
+  color: #CFD8DC;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100px;
 }
 </style>

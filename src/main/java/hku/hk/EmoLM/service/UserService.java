@@ -55,12 +55,7 @@ public class UserService {
             if (claims.get("uid") == null) {
                 return null;
             }
-            if(!userBloomFilter.mightContain((Integer) claims.get("uid"))){
-                return null;
-            }
-            Object uid = userDao.getUserId((Integer) claims.get("uid"));
-            userBloomFilter.add((Integer) uid);
-            return uid;
+            return userDao.getUserId((Integer) claims.get("uid"));
         } catch (Exception e) {
             return null;
         }
