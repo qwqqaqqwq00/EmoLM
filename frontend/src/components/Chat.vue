@@ -9,7 +9,24 @@
         <div class="avatar" v-if="msg.role === 'assistant'">
           <img :src="require('@/assets/robot.jpg')" alt="Avatar" />
         </div>
-        <span>{{ msg.value }}</span>
+        <span>
+          <template v-if="msg.value.includes('<File>')">
+            <template v-for="file in parseFileTokens(msg.value)" :key="file.url">
+              <span
+                class="file-token-card"
+                :class="{ clickable: true }"
+                @click="previewFile(file)"
+                style="display:inline-block;margin:0 4px 4px 0;padding:4px 12px;border-radius:12px;background:#2c3e50;color:#fff;cursor:pointer;box-shadow:0 2px 4px rgba(0,0,0,0.12);font-size:13px;vertical-align:middle;"
+              >
+              {{ file.url.split('_').pop().toLowerCase() }}
+              </span>
+            </template>
+            <span v-html="removeFileTokens(msg.value)"></span>
+          </template>
+          <template v-else>
+            {{ msg.value }}
+          </template>
+        </span>
         <div class="timestamp">{{ formatTimestamp(msg.timestamp) }}</div>
       </div>
     </div>
@@ -54,15 +71,15 @@
     <!-- 新增：padding-space -->
   </div>
   <div class="padding-space">
-    <div v-if="filePreviews.length" class="file-preview-container">
-      <div v-for="preview in filePreviews" :key="preview.name" class="file-preview-item">
-        <img v-if="preview.type.startsWith('image/')" :src="preview.url" alt="Image Preview" class="image-preview"/>
-        <video v-else-if="preview.type.startsWith('video/')" :src="preview.url" controls class="video-preview"></video>
-        <audio v-else-if="preview.type.startsWith('audio/')" :src="preview.url" controls class="audio-preview"></audio>
-        <div class="file-name">{{ preview.name }}</div>
-      </div>
+  <div v-if="previewFiles.length" class="file-preview-container" style="flex-direction:column;">
+    <div v-for="preview in previewFiles" :key="preview.url" class="file-preview-item">
+      <img v-if="preview.type==='png'" :src="preview.url" alt="图片预览" class="image-preview" />
+      <video v-else-if="preview.type==='mp4'" :src="preview.url" controls class="video-preview"></video>
+      <audio v-else-if="preview.type==='mp3'" :src="preview.url" controls class="audio-preview"></audio>
+      <div class="file-name">{{ preview.type.toUpperCase() }}</div>
     </div>
   </div>
+</div>
 </template>
 
 <script>
@@ -77,7 +94,7 @@ export default {
     return {
       messages: [
         { id: 1, value: 'Are we meeting today?', role: 'assistant', timestamp: new Date(), isNew: false, files: [] },
-        { id: 2, value: 'Yes, what time suits you?', role: 'human', timestamp: new Date(), isNew: false, files: [] },
+        { id: 2, value: '<File>http://localhost:8080/uploads/9ac726e9-e484-42a6-882b-201ea3731585_阿能.png</File>Yes, what time suits you?', role: 'human', timestamp: new Date(), isNew: false, files: [] },
         { id: 3, value: 'I was thinking after lunch, I have a meeting in the morning.', role: 'assistant', timestamp: new Date(), isNew: true, files: [] },
       ],
       newMessage: '',
@@ -85,7 +102,7 @@ export default {
       fileList: [],
       stagedFiles: [],
       fileTokens: '',
-      filePreviews: [],
+      previewFiles: [], // 新增：用于存储当前预览的文件
     };
   },
   mounted() {
@@ -204,6 +221,30 @@ export default {
       if (container) {
         container.scrollTop = container.scrollHeight;
       }
+    },
+    parseFileTokens(str) {
+      // 解析 <File>...</File>，返回文件对象数组
+      const regex = /<File>(.*?)<\/File>/g;
+      let match;
+      const files = [];
+      while ((match = regex.exec(str))) {
+        const url = match[1];
+        const ext = url.split('.').pop().toLowerCase();
+        let type = ext;
+        files.push({ url, type });
+      }
+      return files;
+    },
+    removeFileTokens(str) {
+      // 移除 <File>...</File> 标签，仅保留文本
+      return str.replace(/<File>.*?<\/File>/g, '');
+    },
+    previewFile(file) {
+      // 预览最后 0-3 个文件，按垂直方向
+      let previews = [...this.previewFiles];
+      previews.push(file);
+      if (previews.length > 3) previews = previews.slice(-3);
+      this.previewFiles = previews;
     },
   },
 };
