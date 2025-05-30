@@ -53,6 +53,10 @@ Maybe add some features of string escape to avoid XSS attack.
 
 Some string feature of parsing URL hyperlink, emoji, etc. can also be added.
 
+#### Chat messages files attachment as cards
+
+#### File previews in right sidebar
+
 #### Upload button/user menu/config menu with icon
 
 ### Uploader
@@ -139,11 +143,7 @@ Maybe we should add modify service that can update the message.
 
 #### Chat Messages send with files attachment
 
-#### Chat messages files attachment as cards
-
-#### File previews in right sidebar
-
-Files are not yet utilized.
+#### Cross-Origin Resource Sharing
 
 # Demo
 
@@ -159,7 +159,7 @@ Files are not yet utilized.
 
 ![file_upload.png](frontend/public/file_upload.png)
 
-![file_preview.png](frontend%2Fpublic%2Ffile_preview.png)
+![file_preview.png](frontend/public/file_preview.png)
 
 ## TODOs
 
