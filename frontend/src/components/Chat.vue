@@ -72,7 +72,7 @@
   </div>
   <div class="padding-space">
   <div v-if="previewFiles.length" class="file-preview-container" style="flex-direction:column;">
-    <div v-for="preview in previewFiles" :key="preview.url" class="file-preview-item" style="width:90%;">
+    <div v-for="preview in previewFiles" :key="preview.url" class="file-preview-item" style="width:100%;">
       <img v-if="preview.type==='png'" :src="preview.url" alt="图片预览" class="image-preview" style="width:100%;height:auto;max-width:100%;" />
       <video v-else-if="preview.type==='mp4'" :src="preview.url" controls class="video-preview" style="width:100%;height:auto;max-width:100%;"></video>
       <audio v-else-if="preview.type==='mp3'" :src="preview.url" controls class="audio-preview" style="width:100%;"></audio>
