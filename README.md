@@ -139,6 +139,10 @@ Maybe we should add modify service that can update the message.
 
 #### Chat Messages send with files attachment
 
+#### Chat messages files attachment as cards
+
+#### File previews in right sidebar
+
 Files are not yet utilized.
 
 # Demo
@@ -154,6 +158,8 @@ Files are not yet utilized.
 ![chat.png](frontend/public/chat.png)
 
 ![file_upload.png](frontend/public/file_upload.png)
+
+![file_preview.png](frontend%2Fpublic%2Ffile_preview.png)
 
 ## TODOs
 
