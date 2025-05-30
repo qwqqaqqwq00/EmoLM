@@ -72,10 +72,10 @@
   </div>
   <div class="padding-space">
   <div v-if="previewFiles.length" class="file-preview-container" style="flex-direction:column;">
-    <div v-for="preview in previewFiles" :key="preview.url" class="file-preview-item">
-      <img v-if="preview.type==='png'" :src="preview.url" alt="图片预览" class="image-preview" />
-      <video v-else-if="preview.type==='mp4'" :src="preview.url" controls class="video-preview"></video>
-      <audio v-else-if="preview.type==='mp3'" :src="preview.url" controls class="audio-preview"></audio>
+    <div v-for="preview in previewFiles" :key="preview.url" class="file-preview-item" style="width:90%;">
+      <img v-if="preview.type==='png'" :src="preview.url" alt="图片预览" class="image-preview" style="width:100%;height:auto;max-width:100%;" />
+      <video v-else-if="preview.type==='mp4'" :src="preview.url" controls class="video-preview" style="width:100%;height:auto;max-width:100%;"></video>
+      <audio v-else-if="preview.type==='mp3'" :src="preview.url" controls class="audio-preview" style="width:100%;"></audio>
       <div class="file-name">{{ preview.type.toUpperCase() }}</div>
     </div>
   </div>
@@ -240,8 +240,9 @@ export default {
       return str.replace(/<File>.*?<\/File>/g, '');
     },
     previewFile(file) {
-      // 预览最后 0-3 个文件，按垂直方向
+      // 预览最后 0-3 个文件，按垂直方向，重复点击不添加
       let previews = [...this.previewFiles];
+      if (previews.find(f => f.url === file.url)) return;
       previews.push(file);
       if (previews.length > 3) previews = previews.slice(-3);
       this.previewFiles = previews;
