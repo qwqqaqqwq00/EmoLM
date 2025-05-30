@@ -94,7 +94,7 @@ export default {
     return {
       messages: [
         { id: 1, value: 'Are we meeting today?', role: 'assistant', timestamp: new Date(), isNew: false, files: [] },
-        { id: 2, value: '<File>http://localhost:8080/uploads/9ac726e9-e484-42a6-882b-201ea3731585_阿能.png</File>Yes, what time suits you?', role: 'human', timestamp: new Date(), isNew: false, files: [] },
+        { id: 2, value: 'Yes, what time suits you?', role: 'human', timestamp: new Date(), isNew: false, files: [] },
         { id: 3, value: 'I was thinking after lunch, I have a meeting in the morning.', role: 'assistant', timestamp: new Date(), isNew: true, files: [] },
       ],
       newMessage: '',

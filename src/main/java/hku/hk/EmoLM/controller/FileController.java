@@ -24,7 +24,7 @@ public class FileController {
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
             String filePath = fileService.saveFile(file);
-            String serverIp = "http://localhost"; // 动态获取服务器IP的逻辑需要完善
+            String serverIp = "http://localhost";
             String fileUrl = serverIp + ":8080/uploads/" + filePath;
             return ResponseEntity.ok().body(Map.of("success", true, "message", "File uploaded successfully", "filePath", fileUrl));
         } catch (IllegalArgumentException e) {

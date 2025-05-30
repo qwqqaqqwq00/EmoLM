@@ -1,6 +1,6 @@
 <template>
   <header class="chat-header">
-    <a class="chat-link" @click="createNewChatHistory">EmoLM</a>
+    <a class="chat-link" @click="createNewChatHistory">Emo<span class="hide-text">tional</span> L<span class="hide-text">arge Language&nbsp;</span>M<span class="hide-text">odel</span></a>
     <div class="config-menu">
       <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <circle cx="12" cy="12" r="3"/>
@@ -172,5 +172,20 @@ export default {
 
 .dropdown-menu li:hover {
   background-color: #222;
+}
+
+.hide-text {
+  display: inline-block;
+  max-width: 0;
+  vertical-align: bottom;
+  overflow: hidden;
+  white-space: nowrap;
+  text-align: left;
+  transition: max-width 1s cubic-bezier(0.4,0,0.2,1);
+}
+
+.chat-link:hover .hide-text {
+  max-width: 200px;
+  color: #ECEFF1;
 }
 </style>
