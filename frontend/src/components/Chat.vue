@@ -50,14 +50,15 @@
         </i>
       </div>
     </form>
-    <UploadCard v-if="showUploadCard" @close="toggleUploadCard" @update-file-list="updateFileList" @staging-files="stageFile"/>
+    <UploadCard v-if="showUploadCard" @close="toggleUploadCard" @update-file-list="updateFileList" @staging-files="stageFile" @stage-file-url="stageFileUrl"/>
     <!-- 新增：padding-space -->
   </div>
   <div class="padding-space">
     <div v-if="filePreviews.length" class="file-preview-container">
       <div v-for="preview in filePreviews" :key="preview.name" class="file-preview-item">
-        <img v-if="preview.type.startsWith('image')" :src="preview.url" alt="Image Preview" class="image-preview"/>
-        <video v-else-if="preview.type.startsWith('video')" :src="preview.url" controls class="video-preview"></video>
+        <img v-if="preview.type.startsWith('image/')" :src="preview.url" alt="Image Preview" class="image-preview"/>
+        <video v-else-if="preview.type.startsWith('video/')" :src="preview.url" controls class="video-preview"></video>
+        <audio v-else-if="preview.type.startsWith('audio/')" :src="preview.url" controls class="audio-preview"></audio>
         <div class="file-name">{{ preview.name }}</div>
       </div>
     </div>
@@ -83,6 +84,7 @@ export default {
       showUploadCard: false,
       fileList: [],
       stagedFiles: [],
+      fileTokens: '',
       filePreviews: [],
     };
   },
@@ -145,27 +147,18 @@ export default {
 
       const userMessage = {
         id: this.messages.length + 1,
-        value: this.newMessage,
+        value: this.fileTokens + this.newMessage,
         role: 'human',
         timestamp: new Date(),
         isNew: true,
         files: this.stagedFiles.length > 0 ? this.stagedFiles.map(file => file.name) : []
       };
       this.messages.push(userMessage);
-      this.filePreviews = this.stagedFiles.map(file => ({
-        name: file.name,
-        type: file.type,
-        url: URL.createObjectURL(file),
-      }));
 
       const messagePayload = new URLSearchParams({
-        message: this.newMessage,
-        files: this.stagedFiles.length > 0 ? this.stagedFiles.map(file => file.name) : [],
+        message: this.fileTokens + this.newMessage,
         hid: this.$route.query.hid || 0
       });
-
-      this.stagedFiles = [];
-
       this.$axios.post('/api/chat/generate', messagePayload, {
         headers: {
           Authorization: `Bearer ${token}`
@@ -182,6 +175,7 @@ export default {
           };
           this.messages.push(newMessage);
           this.newMessage = '';
+          this.fileTokens = '';
           this.stagedFiles = [];
           this.scrollToBottom();
         })
@@ -196,8 +190,11 @@ export default {
     updateFileList(newFileList) {
       this.fileList = newFileList;
     },
-    stageFile() {
-      this.stagedFiles = [...this.fileList];
+    stageFile(uploadedFileList) {
+      this.stagedFiles = [...uploadedFileList];
+    },
+    stageFileUrl(fileUrl) {
+      this.fileTokens += `<File>${fileUrl}</File>`;
     },
     formatTimestamp(date) {
       return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });

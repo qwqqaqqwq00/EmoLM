@@ -77,10 +77,9 @@ public class ChatMessageController {
     /**
      * send message and generate response
      */
-    @PostMapping("/generate")
+    @PostMapping(value = "/generate", produces = "application/json;charset=UTF-8")
     public ResponseEntity<?> generateMessage(
             @RequestParam String message,
-            @RequestParam(required = false) List<String> files,
             @RequestParam(required = false) int hid,
             @RequestHeader("Authorization") String token) {
         try {
@@ -88,11 +87,10 @@ public class ChatMessageController {
             if(uid_raw != null){
                 int uid = (int) uid_raw;
                 if (hid == 0) {
-                    return ResponseEntity.badRequest().body(Map.of("error", "Invalid hid"));
+                    hid = chatHistoryService.getLastHid(uid);
                 }
                 Map<String, Object> response = Map.of(
-                        "message", "This is a generated response to: " + message,
-                        "files", files != null ? files : List.of()
+                        "message", "This is a generated response to: " + message
                 );
 
                 chatHistoryService.addMessage(hid, message, "human", uid);

@@ -38,10 +38,12 @@ export default {
       });
 
       Promise.all(uploadPromises)
-        .then(() => {
-          this.$emit('staging-files');
+        .then(responses => {
+          responses.forEach(response => {
+            this.$emit('stage-file-url', response.data.filePath);
+          });
           alert("All files uploaded successfully!");
-          this.fileList = []; // Clear file list
+          this.fileList = [];
           this.toggleUploadCard();
         })
         .catch((e) => {

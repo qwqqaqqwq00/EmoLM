@@ -12,7 +12,7 @@ import java.util.UUID;
 @Service
 public class FileService {
 
-    private static final String UPLOAD_DIR = Paths.get(System.getProperty("user.dir"), "uploads/").toString();
+    private static final String UPLOAD_DIR = Paths.get("./uploads").toAbsolutePath().normalize().toString();
     private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
     public FileService() {
@@ -39,7 +39,7 @@ public class FileService {
             throw new RuntimeException("File save failed", e);
         }
 
-        return filePath;
+        return uniqueFileName;
     }
 
     private void validateFile(MultipartFile file) {
@@ -66,5 +66,17 @@ public class FileService {
                 file.deleteOnExit();
             }
         }
+    }
+
+    public String getFilePath(String fileName) {
+        File file = Paths.get(UPLOAD_DIR, fileName).normalize().toFile();
+        if(!file.getAbsolutePath().startsWith(UPLOAD_DIR)){
+            throw new RuntimeException("Invalid file path");
+        }
+        return file.getAbsolutePath();
+    }
+
+    public File getFile(String fileName) {
+        return new File(getFilePath(fileName));
     }
 }
